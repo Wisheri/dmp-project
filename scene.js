@@ -1,4 +1,43 @@
 var notes = new Array();
+var pressedNotes = new Array();
+var nextNote = 0;
+var startTime;
+
+function currentTime() {
+	var d = new Date();
+	return d.getTime();
+}
+
+function timeFromStart() {
+	var currTime = currentTime();
+	return currTime - startTime;
+}
+
+document.onkeyup = function(e) {
+    e = e || window.event;
+	var keyCode = e.keyCode;
+    if (keyCode == 13 /*ENTER*/) {
+        var d = new Date();
+		startTime = currentTime();
+		camera.position.z = 2;
+    }
+};
+
+document.onkeydown = function(e) {
+	e = e || window.event;
+	e.preventDefault();
+	var keyCode = e.keyCode;
+	if (keyCode == 112 /*F1*/) {
+		var note = notes[nextNote];
+		var timeDiff = timeFromStart() - note.start;
+		if (timeDiff > 500) camera.position.z = 10;
+		else if (timeDiff < -500) camera-position.z = 1;
+		else camera.position.z = 3;
+		pressedNotes.push(note);
+		nextNote++;
+	}
+	return false; // Suppress default event
+}
 
 function Note(label, start, end) {
 	this.label = label;
@@ -6,13 +45,24 @@ function Note(label, start, end) {
 	this.end = end;
 }
 
+function isValidNote(char) {
+	var isValid = false;
+	if (char == "A") isValid = true;
+	if (char == "B") isValid = true;
+	if (char == "C") isValid = true;
+	if (char == "D") isValid = true;
+	if (char == "E") isValid = true;
+	if (char == "F") isValid = true;
+	return isValid;
+}
+
 function parseNotes(noteStr) {
-	var noteLen = 100;
+	var noteLen = 1000;
 	var currentTime = 0;
 	for (var i=0;i<noteStr.length;i++) 
 	{
 		var currentChar = noteStr.charAt(i);
-		if ( !(currentChar in [' ', '|', ':', '[', ']']) ) 
+		if ( isValidNote(currentChar) ) 
 		{
 			notes.push(new Note(currentChar, currentTime, currentTime + noteLen));
 		}
@@ -54,7 +104,7 @@ if (oRequest.status==200) alert(oRequest.responseText);
 else alert("Error executing XMLHttpRequest call!");/*/
 
 
-/*/var scene = new THREE.Scene();
+var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
 
 var renderer = new THREE.WebGLRenderer();
@@ -79,4 +129,3 @@ var render = function () {
 };
 
 render();
-/*/
