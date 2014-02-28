@@ -1,0 +1,19 @@
+application: dmp-project
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /js
+  static_dir: js
+
+- url: /files
+  static_dir: files
+
+- url: /.*
+  script: dmp-project.app
+
+libraries:
+- name: jinja2
+  version: latest
