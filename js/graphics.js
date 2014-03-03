@@ -29,6 +29,8 @@ function Graphics() {
 		//this.scene.add(this.ball);
 
 		this.camera.position.z = 5;
+		globals.renderManager.add('game', this.scene, this.camera, render_game, {balls: this.balls});
+		globals.renderManager.setCurrent('game');
 	}
 
 	this.create_ball = function(key) {
@@ -61,5 +63,12 @@ function Graphics() {
 		this.scene.add(ball);
 	}
 	
-
+	function render_game(delta, renderer) {
+		for (var i = 0; i < globals.game.graphics.balls.length; i += 1) {
+			this.objects.balls[i].translateZ(0.01);
+			this.objects.balls[i].translateX(0);
+			this.objects.balls[i].translateY(-0.01);
+		}
+		renderer.render(this.scene, this.camera);
+	}
 }
