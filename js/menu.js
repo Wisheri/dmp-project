@@ -35,6 +35,4 @@ function Menu() {
 	var menu_light = new THREE.PointLight( 0xff0000, 10, 100);
 	this.scene.add(menu_light);
 	menu_light.position.set(45,5,10);
-
-	render_menu();
 }

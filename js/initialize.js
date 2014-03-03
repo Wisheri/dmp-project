@@ -5,7 +5,7 @@ globals.renderer = new THREE.WebGLRenderer();
 globals.renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(globals.renderer.domElement);
 globals.menu = new Menu();
-
+render_menu();
 function render_menu() {
 	requestAnimationFrame(render_menu);
 
@@ -17,6 +17,11 @@ function render_game() {
 	requestAnimationFrame(render_game);
 	globals.renderer.render(globals.game.graphics.scene, globals.game.graphics.camera);
 };
+
+function startGame(song) {
+	globals.game = new Game(song);
+	render_game();
+}
 
 var renderManager = new THREE.Extras.RenderManager(new THREE.WebGLRenderer());
 

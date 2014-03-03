@@ -18,8 +18,6 @@ function Graphics() {
 		this.scene.add(this.light);
 
 		this.camera.position.z = 5;
-
-		render_game();
 	}
 
 	

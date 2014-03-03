@@ -38,7 +38,7 @@ function Song(text) {
 			currentTime += noteLen;
 		}
 	}
-	globals.game = new Game(this);
+	startGame(this);
 }
 
 function Note(label, start, end) {
