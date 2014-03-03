@@ -1,16 +1,14 @@
 var globals = new Object();
-globals.renderManager = new THREE.Extras.RenderManager(new THREE.WebGLRenderer());
+var renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+globals.renderManager = new THREE.Extras.RenderManager(renderer);
 
-globals.renderer = new THREE.WebGLRenderer();
-globals.renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(globals.renderer.domElement);
 globals.menu = new Menu();
-render_menu();
-function render_menu() {
-	requestAnimationFrame(render_menu);
-
-	globals.menu.hello_text.rotation.x += 0.01;
-	globals.renderer.render(globals.menu.scene, globals.menu.camera);
+animate();
+function render_menu(delta, renderer) {
+	this.objects.text.rotation.x += delta;
+	renderer.render(this.scene, this.camera);
 };
 
 function render_game() {
@@ -23,6 +21,7 @@ function startGame(song) {
 	render_game();
 }
 
-var renderManager = new THREE.Extras.RenderManager(new THREE.WebGLRenderer());
-
-Menu();
+function animate() {
+	requestAnimationFrame(animate);
+	globals.renderManager.renderCurrent();
+}

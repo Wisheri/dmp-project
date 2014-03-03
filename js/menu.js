@@ -35,4 +35,12 @@ function Menu() {
 	var menu_light = new THREE.PointLight( 0xff0000, 10, 100);
 	this.scene.add(menu_light);
 	menu_light.position.set(45,5,10);
+	globals.renderManager.add('menu', this.scene, this.camera, render_menu, {text: this.hello_text});
+	globals.renderManager.setCurrent('menu');
+
+	function render_menu(delta, renderer) {
+		this.objects.text.rotation.x += delta;
+		renderer.render(this.scene, this.camera);
+	};
+
 }
