@@ -13,7 +13,7 @@ function Graphics() {
 		this.scene.add(this.cube);
 
 		this.light = new THREE.PointLight( 0xff0000, 10, 100);
-		this.light.position.set(45,5,10);
+		this.light.position.set(5,5,10);
 
 		this.scene.add(this.light);
 
