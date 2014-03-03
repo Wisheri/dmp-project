@@ -23,8 +23,8 @@ function Game(song) {
 		if (keyCode == 112 /*F1*/) {
 			var note = notes[nextNote];
 			var timeDiff = timeFromStart() - note.start;
-			if (timeDiff > 500) camera.position.z = 10;
-			else if (timeDiff < -500) camera-position.z = 1;
+			if (timeDiff > 500) graphics.camera.position.z = 10;
+			else if (timeDiff < -500) graphics.camera.position.z = 1;
 			else camera.position.z = 3;
 			pressedNotes.push(note);
 			nextNote++;
