@@ -19,12 +19,12 @@ function Graphics() {
 
 		this.camera.position.z = 5;
 
-		this.render();
+		render();
 	}
 
-	this.render = function () {
-		requestAnimationFrame(this.render);
-		renderer.render(this.scene, this.camera);
+	function render() {
+		requestAnimationFrame(render);
+		globals.renderer.render(this.scene, this.camera);
 	};
 
 	
