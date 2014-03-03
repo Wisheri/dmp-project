@@ -1,5 +1,14 @@
 function Graphics() {
-	var neckDir = new THREE.Vector3( -70, 0, 0 );
+	var neckSide = new THREE.Vector3(1, 0, 0);
+	var neckUp = new THREE.Vector3(0, 1, 1).normalize();
+	var neckDir = new THREE.Vector3();
+	neckDir.crossVectors( neckUp, neckSide );
+	var neckRotation = new THREE.Matrix3(neckSide.x, neckUp.x, neckDir.x,
+										neckSide.y, neckUp.y, neckDir.y,
+										neckSide.z, neckUp.z, neckDir.z);
+	var neckEuler = new THREE.Euler();
+	neckEuler.setFromRotationMatrix(neckRotation);
+
 	this.balls = new Array();
 	
 	this.init_scene = function () {
@@ -10,7 +19,7 @@ function Graphics() {
 		var material = new THREE.MeshPhongMaterial({color: 0x11ff11});
 
 		this.cube = new THREE.Mesh(geometry, material);
-		this.cube.rotation = new THREE.Euler( neckDir.x, neckDir.y, neckDir.z, 'XYZ' );
+		this.cube.rotation = neckEuler;
 		this.scene.add(this.cube);
 
 		//this.light = new THREE.PointLight( 0xff0000, 10, 100);
