@@ -35,12 +35,6 @@ function Menu() {
 	var menu_light = new THREE.PointLight( 0xff0000, 10, 100);
 	this.scene.add(menu_light);
 	menu_light.position.set(45,5,10);
-	
-	document.onkeyup = function(e) {
-		e = e || window.event;
-		var keyCode = e.keyCode;
-	    	if (keyCode == 13 /*ENTER*/) {
-			Game();
-	    	}
-	};
+
+	render_menu();
 }

@@ -19,13 +19,8 @@ function Graphics() {
 
 		this.camera.position.z = 5;
 
-		render();
+		render_game();
 	}
-
-	function render() {
-		requestAnimationFrame(render);
-		globals.renderer.render(this.scene, this.camera);
-	};
 
 	
 
