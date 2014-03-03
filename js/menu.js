@@ -29,8 +29,8 @@ function Menu() {
 	});
 
 	var hello_text_material = new THREE.MeshPhongMaterial({color: 0x11ff11});
-	var hello_text = new THREE.Mesh(hello_text_geometry, hello_text_material);
-	this.scene.add(hello_text);
+	this.hello_text = new THREE.Mesh(hello_text_geometry, hello_text_material);
+	this.scene.add(this.hello_text);
 
 	var menu_light = new THREE.PointLight( 0xff0000, 10, 100);
 	this.scene.add(menu_light);
@@ -43,13 +43,4 @@ function Menu() {
 			Game();
 	    	}
 	};
-
-	function menu_render() {
-		requestAnimationFrame(menu_render);
-
-		hello_text.rotation.x += 0.01;
-		globals.renderer.render(this.scene, this.camera);
-	}
-
-	menu_render();
 }
