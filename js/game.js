@@ -31,4 +31,26 @@ function Game(song) {
 		}
 		return false; // Suppress default event
 	}
+
+	document.onkeydown = function(e) {
+		e = e || window.event;
+		e.preventDefault();
+		var keyCode = e.keyCode;
+		if (keyCode == 49) {
+			globals.game.graphics.create_ball('A');
+		}
+		else if (keyCode == 50) {
+			globals.game.graphics.create_ball('B');
+		}
+		else if (keyCode == 51) {
+			globals.game.graphics.create_ball('C');
+		}
+		else if (keyCode == 52) {
+			globals.game.graphics.create_ball('D');
+		}
+		else if (keyCode == 53) {
+			globals.game.graphics.create_ball('E');
+		}
+		return false;
+	}
 }
