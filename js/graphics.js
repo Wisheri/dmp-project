@@ -1,11 +1,12 @@
 function Graphics() {
-	var neckSide = new THREE.Vector3(1, 0, 0);
-	var neckUp = new THREE.Vector3(0, 1, 1).normalize();
-	var neckDir = new THREE.Vector3();
-	neckDir.crossVectors( neckUp, neckSide );
-	var neckRotation = new THREE.Matrix3(neckSide.x, neckUp.x, neckDir.x,
-										neckSide.y, neckUp.y, neckDir.y,
-										neckSide.z, neckUp.z, neckDir.z);
+	var neckSide = new THREE.Vector3(1, 0, 0).normalize();
+	var neckUp = new THREE.Vector3(0, 1, -1).normalize();
+	var neckCross = new THREE.Vector3();
+	neckCross.crossVectors( neckUp, neckSide );
+	var neckRotation = new THREE.Matrix4(neckSide.x, neckUp.x, neckCross.x, 0,
+										neckSide.y, neckUp.y, neckCross.y, 0,
+										neckSide.z, neckUp.z, neckCross.z, 0,
+										0, 0, 0, 1);
 	var neckEuler = new THREE.Euler();
 	neckEuler.setFromRotationMatrix(neckRotation);
 
@@ -20,6 +21,7 @@ function Graphics() {
 
 		this.cube = new THREE.Mesh(geometry, material);
 		this.cube.rotation = neckEuler;
+		//this.cube.applyMatrix(neckRotation);
 		this.scene.add(this.cube);
 
 		//this.light = new THREE.PointLight( 0xff0000, 10, 100);
@@ -28,7 +30,9 @@ function Graphics() {
 		this.light.position.set(0, 3.5,5);
 
 		this.scene.add(this.light);
-
+		//var ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light useful for debugging
+		//this.scene.add( ambientLight );
+		
 		//var ball_geometry = new THREE.SphereGeometry(0.5,0.5,0.5,Math.PI/2, Math.PI*2, 0, Math.PI);
 		//var ball_material = new THREE.MeshPhongMaterial({color: 0x00FFFF});
 		//ball_material.side = THREE.BackSide;
@@ -38,7 +42,7 @@ function Graphics() {
 		//this.scene.add(this.ball);
 
 		this.camera.position.z = 5;
-		globals.renderManager.add('game', this.scene, this.camera, render_game, {balls: this.balls});
+		globals.renderManager.add('game', this.scene, this.camera, render_game, {balls: this.balls, neckDir: neckUp});
 		globals.renderManager.setCurrent('game');
 	}
 
@@ -74,9 +78,10 @@ function Graphics() {
 	
 	function render_game(delta, renderer) {
 		for (var i = 0; i < globals.game.graphics.balls.length; i += 1) {
-			this.objects.balls[i].translateZ(0.01);
-			this.objects.balls[i].translateX(0);
-			this.objects.balls[i].translateY(-0.01);
+			var dir = this.objects.neckDir;
+			this.objects.balls[i].translateX(0.01*dir.x);
+			this.objects.balls[i].translateZ(0.01*dir.y);
+			this.objects.balls[i].translateY(0.01*dir.z);
 		}
 		renderer.render(this.scene, this.camera);
 	}
