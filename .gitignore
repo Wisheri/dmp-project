@@ -1,2 +1,5 @@
 #Temporary files from gedit
 *~
+
+#Batch for running the server on my machine
+runserver.bat

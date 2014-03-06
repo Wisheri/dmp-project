@@ -5,6 +5,7 @@ function Game(song) {
 	var nextNote = 0;
 	var startTime;
 	this.graphics.init_scene();
+	this.graphics.create_note('A', 4);
 
 	function currentTime() {
 		var d = new Date();
