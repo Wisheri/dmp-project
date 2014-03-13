@@ -34,23 +34,24 @@ function Game(song) {
 	}
 
 	document.onkeydown = function(e) {
+		var len = 3;
 		e = e || window.event;
 		e.preventDefault();
 		var keyCode = e.keyCode;
 		if (keyCode == 49) {
-			globals.game.graphics.create_ball('A');
+			globals.game.graphics.create_note('A', len);
 		}
 		else if (keyCode == 50) {
-			globals.game.graphics.create_ball('B');
+			globals.game.graphics.create_note('B', len);
 		}
 		else if (keyCode == 51) {
-			globals.game.graphics.create_ball('C');
+			globals.game.graphics.create_note('C', len);
 		}
 		else if (keyCode == 52) {
-			globals.game.graphics.create_ball('D');
+			globals.game.graphics.create_note('D', len);
 		}
 		else if (keyCode == 53) {
-			globals.game.graphics.create_ball('E');
+			globals.game.graphics.create_note('E', len);
 		}
 		return false;
 	}

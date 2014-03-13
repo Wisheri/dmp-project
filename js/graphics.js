@@ -12,29 +12,23 @@ function Graphics() {
 	
 	var noteShape = new THREE.Shape( notePoints );
 	var noteTranslationX = new THREE.Matrix4(1, 0, 0, -noteMiddle,
-										0, 1, 0, 0,
-										0, 0, 1, 0,
-										0, 0, 0, 1);
-	var noteRotationX = new THREE.Matrix4(1, 0, 0, 0,
-										0, 0, -1, 0,
-										0, 1, 0, 0,
-										0, 0, 0, 1);
-	var noteRotationY = new THREE.Matrix4(-1, 0, 0, 0,
-										0, 1, 0, 0,
-										0, 0, -1, 0,
-										0, 0, 0, 1);
-										
+						0, 1, 0, 0,
+						0, 0, 1, 0,
+						0, 0, 0, 1);
 	var neckSide = new THREE.Vector3(1, 0, 0).normalize();
 	var neckUp = new THREE.Vector3(0, 1, -1).normalize();
 	var neckCross = new THREE.Vector3();
 	neckCross.crossVectors( neckUp, neckSide );
 	var neckRotation = new THREE.Matrix4(neckSide.x, neckUp.x, neckCross.x, 0,
-										neckSide.y, neckUp.y, neckCross.y, 0,
-										neckSide.z, neckUp.z, neckCross.z, 0,
-										0, 0, 0, 1);
+						neckSide.y, neckUp.y, neckCross.y, 0,
+						neckSide.z, neckUp.z, neckCross.z, 0,
+						0, 0, 0, 1);
 	var neckEuler = new THREE.Euler().setFromRotationMatrix(neckRotation);
+	var neckDir = neckUp;
+	var notePath = new THREE.LineCurve(new THREE.Vector3(0, 0, 0), neckDir);
 
 	this.balls = new Array();
+	this.notes = new Array();
 	
 	this.noteMesh = new Object();
 	
@@ -67,7 +61,7 @@ function Graphics() {
 		//this.scene.add(this.ball);
 
 		this.camera.position.z = 5;
-		globals.renderManager.add('game', this.scene, this.camera, render_game, {balls: this.balls, neckDir: neckUp});
+		globals.renderManager.add('game', this.scene, this.camera, render_game, {notes: this.notes, neckDir: neckDir});
 		globals.renderManager.setCurrent('game');
 	}
 
@@ -105,12 +99,13 @@ function Graphics() {
 		var options = {
 			amount: length, curveSegments: 3,
 			bevelEnabled: false,
-			material: 0, extrudeMaterial: 1
+			material: 0, extrudeMaterial: 1,
+			extrudePath: notePath
 		};
 		var noteGeometry = new THREE.ExtrudeGeometry( noteShape, options );
 		noteGeometry.applyMatrix(noteTranslationX);
-		noteGeometry.applyMatrix(noteRotationX);
-		noteGeometry.applyMatrix(noteRotationY);
+		//noteGeometry.applyMatrix(noteRotationX);
+		//noteGeometry.applyMatrix(noteRotationY);
 		var material = new THREE.MeshPhongMaterial({color: 0xff1111});
 		var note = new THREE.Mesh( noteGeometry, material );
 		switch(label)
@@ -133,17 +128,18 @@ function Graphics() {
 		default:
 			note.position.set(-111,-111,-111);
 		}
-		note.rotation = neckEuler;
+		//note.rotation = neckEuler;
 		this.scene.add(note);
+		this.notes.push(note);
 		
 	}
 	
 	function render_game(delta, renderer) {
-		for (var i = 0; i < globals.game.graphics.balls.length; i += 1) {
+		for (var i = 0; i < this.objects.notes.length; i += 1) {
 			var dir = this.objects.neckDir;
-			this.objects.balls[i].translateX(0.01*dir.x);
-			this.objects.balls[i].translateZ(0.01*dir.y);
-			this.objects.balls[i].translateY(0.01*dir.z);
+			this.objects.notes[i].translateX(0.01*dir.x);
+			this.objects.notes[i].translateZ(0.01*dir.y);
+			this.objects.notes[i].translateY(0.01*dir.z);
 		}
 		renderer.render(this.scene, this.camera);
 	}
