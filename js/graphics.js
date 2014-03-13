@@ -1,4 +1,12 @@
 function Graphics() {
+	// Constants
+	var NECK_WIDTH = 8;
+	var NECK_LENGTH = 15;
+	var NOTE_WIDTH = 1.0; // This depends on the shape of the note!	
+	var NOTES_POS_0 = new THREE.Vector3(-NECK_WIDTH/2 + NECK_WIDTH / 10, -NECK_LENGTH/2, 0); // Later rotated with neckRotation
+	// Later note positions can be initialized to NOTES_POS_0 + n*NOTES_POS_DELTA
+	var NOTES_POS_DELTA = new THREE.Vector3(NECK_WIDTH / 5, 0, 0); // Later rotated with neckRotation 
+
 	var notePoints = [];
 	var noteMiddle = 0.5;
 	notePoints.push( new THREE.Vector2 (   0,  0 ) );
@@ -11,7 +19,7 @@ function Graphics() {
 	notePoints.push( new THREE.Vector2 (   0.99,  0 ) );
 	
 	var noteShape = new THREE.Shape( notePoints );
-	var noteTranslationX = new THREE.Matrix4(1, 0, 0, -noteMiddle,
+	var noteTranslationX = new THREE.Matrix4(1, 0, 0, noteMiddle,
 						0, 1, 0, 0,
 						0, 0, 1, 0,
 						0, 0, 0, 1);
@@ -26,6 +34,8 @@ function Graphics() {
 	var neckEuler = new THREE.Euler().setFromRotationMatrix(neckRotation);
 	var neckDir = neckUp;
 	var notePath = new THREE.LineCurve(new THREE.Vector3(0, 0, 0), neckDir);
+	NOTES_POS_0.applyEuler(neckEuler);
+	NOTES_POS_DELTA.applyEuler(neckEuler);
 
 	this.balls = new Array();
 	this.notes = new Array();
@@ -35,7 +45,7 @@ function Graphics() {
 	this.init_scene = function () {
 		this.scene = new THREE.Scene();
 		this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-		var geometry = new THREE.CubeGeometry(7,15,0);
+		var geometry = new THREE.CubeGeometry(NECK_WIDTH,NECK_LENGTH,0);
 		var material = new THREE.MeshPhongMaterial({color: 0x11ff11});
 		
 		this.cube = new THREE.Mesh(geometry, material);
@@ -60,6 +70,7 @@ function Graphics() {
 		//this.ball.position.set(-1,2,-1); 
 		//this.scene.add(this.ball);
 
+		this.camera.lookAt(new THREE.Vector3(0, 0, -1));
 		this.camera.position.z = 5;
 		globals.renderManager.add('game', this.scene, this.camera, render_game, {notes: this.notes, neckDir: neckDir});
 		globals.renderManager.setCurrent('game');
@@ -108,26 +119,31 @@ function Graphics() {
 		//noteGeometry.applyMatrix(noteRotationY);
 		var material = new THREE.MeshPhongMaterial({color: 0xff1111});
 		var note = new THREE.Mesh( noteGeometry, material );
+		var n = 0;
 		switch(label)
 		{
 		case 'A':
-			note.position.set(0,1,0);
+			n = 0;
 			break;
 		case 'B':
-			note.position.set(-0.5,2,-1);
+			n = 1;
 			break;
 		case 'C':
-			note.position.set(0,2,-1);
+			n = 2;
 			break;
 		case 'D':
-			note.position.set(0.5,2,-1);
+			n = 3;
 			break;
 		case 'E':
-			note.position.set(1,0,0);
+			n = 4;
 			break;
 		default:
 			note.position.set(-111,-111,-111);
 		}
+		note.position.copy(NOTES_POS_DELTA);
+		note.position.multiplyScalar(n);
+		note.position.add(NOTES_POS_0);
+		
 		//note.rotation = neckEuler;
 		this.scene.add(note);
 		this.notes.push(note);
