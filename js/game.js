@@ -1,6 +1,8 @@
 function Game(song) {
 	this.graphics = new Graphics();
 	this.song = song;
+	for (var i = 0; i < song.notes.length; i++) {
+		song.notes[i] = this.graphics.
 	var pressedNotes = new Array();
 	var nextNote = 0;
 	var startTime;

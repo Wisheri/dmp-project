@@ -45,6 +45,8 @@ function Note(label, start, end) {
 	this.label = label;
 	this.start = start;
 	this.end = end;
+	this.length = start-end;
+	
 }
 
 /*/var oRequest = new XMLHttpRequest();

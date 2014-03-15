@@ -37,10 +37,7 @@ function Graphics() {
 	NOTES_POS_0.applyEuler(neckEuler);
 	NOTES_POS_DELTA.applyEuler(neckEuler);
 
-	this.balls = new Array();
 	this.notes = new Array();
-	
-	this.noteMesh = new Object();
 	
 	this.init_scene = function () {
 		this.scene = new THREE.Scene();
@@ -50,7 +47,6 @@ function Graphics() {
 		
 		this.cube = new THREE.Mesh(geometry, material);
 		this.cube.rotation = neckEuler;
-		//this.cube.applyMatrix(neckRotation);
 		this.scene.add(this.cube);
 
 		//this.light = new THREE.PointLight( 0xff0000, 10, 100);
@@ -62,65 +58,42 @@ function Graphics() {
 		//var ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light useful for debugging
 		//this.scene.add( ambientLight );
 		
-		//var ball_geometry = new THREE.SphereGeometry(0.5,0.5,0.5,Math.PI/2, Math.PI*2, 0, Math.PI);
-		//var ball_material = new THREE.MeshPhongMaterial({color: 0x00FFFF});
-		//ball_material.side = THREE.BackSide;
-
-		//this.ball = new THREE.Mesh(ball_geometry, ball_material);
-		//this.ball.position.set(-1,2,-1); 
-		//this.scene.add(this.ball);
-
 		this.camera.lookAt(new THREE.Vector3(0, 0, -1));
 		this.camera.position.z = 5;
 		globals.renderManager.add('game', this.scene, this.camera, render_game, {notes: this.notes, neckDir: neckDir});
 		globals.renderManager.setCurrent('game');
 	}
 
-	this.create_ball = function(key) {
-		var ball_geometry = new THREE.SphereGeometry(0.5,0,0.5,Math.PI/2, Math.PI*2, 0, Math.PI);
-		var ball_material = new THREE.MeshPhongMaterial({color: 0x00FFFF});
-
-		ball = new THREE.Mesh(ball_geometry, ball_material);
-
-		switch(key)
-		{
-		case 'A':
-			ball.position.set(-1,2,2);
-			break;
-		case 'B':
-			ball.position.set(-0.5,2,-1);
-			break;
-		case 'C':
-			ball.position.set(0,2,-1);
-			break;
-		case 'D':
-			ball.position.set(0.5,2,-1);
-			break;
-		case 'E':
-			ball.position.set(1,0,0);
-			break;
-		default:
-			ball.position.set(-111,-111,-111);
+	function render_game(delta, renderer) {
+		for (var i = 0; i < this.objects.notes.length; i += 1) {
+			var dir = this.objects.neckDir;
+			this.objects.notes[i].translateX(delta*dir.x);
+			this.objects.notes[i].translateZ(delta*dir.y);
+			this.objects.notes[i].translateY(delta*dir.z);
 		}
-		this.balls.push(ball);
-		this.scene.add(ball);
+		renderer.render(this.scene, this.camera);
 	}
-	
-	this.create_note = function(label, length) {
+
+	this.create_note_geometries(notes) {
+		for (var i = 0; i < notes.length; i++) {
+			this.create_note_geometry(notes[i]);
+		}
+	}
+
+	// Call this for each note after initializing graphics
+	this.create_note_geometry = function(note) {
 		var options = {
-			amount: length, curveSegments: 3,
+			amount: note.length, curveSegments: 3,
 			bevelEnabled: false,
 			material: 0, extrudeMaterial: 1,
 			extrudePath: notePath
 		};
 		var noteGeometry = new THREE.ExtrudeGeometry( noteShape, options );
 		noteGeometry.applyMatrix(noteTranslationX);
-		//noteGeometry.applyMatrix(noteRotationX);
-		//noteGeometry.applyMatrix(noteRotationY);
 		var material = new THREE.MeshPhongMaterial({color: 0xff1111});
-		var note = new THREE.Mesh( noteGeometry, material );
+		var noteMesh = new THREE.Mesh( noteGeometry, material );
 		var n = 0;
-		switch(label)
+		switch(note.label)
 		{
 		case 'A':
 			n = 0;
@@ -144,19 +117,6 @@ function Graphics() {
 		note.position.multiplyScalar(n);
 		note.position.add(NOTES_POS_0);
 		
-		//note.rotation = neckEuler;
-		this.scene.add(note);
-		this.notes.push(note);
-		
-	}
-	
-	function render_game(delta, renderer) {
-		for (var i = 0; i < this.objects.notes.length; i += 1) {
-			var dir = this.objects.neckDir;
-			this.objects.notes[i].translateX(0.01*dir.x);
-			this.objects.notes[i].translateZ(0.01*dir.y);
-			this.objects.notes[i].translateY(0.01*dir.z);
-		}
-		renderer.render(this.scene, this.camera);
+		note.mesh = noteMesh;
 	}
 }
