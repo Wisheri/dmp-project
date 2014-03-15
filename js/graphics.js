@@ -1,9 +1,10 @@
-function Graphics() {
+function Graphics(game) {
+	this.game = game;
 	// Constants
 	var NECK_WIDTH = 8;
 	var NECK_LENGTH = 15;
 	var NOTE_WIDTH = 1.0; // This depends on the shape of the note!	
-	var NOTES_POS_0 = new THREE.Vector3(-NECK_WIDTH/2 + NECK_WIDTH / 10, -NECK_LENGTH/2, 0); // Later rotated with neckRotation
+	var NOTES_POS_0 = new THREE.Vector3(-NECK_WIDTH/2 + NECK_WIDTH / 10, -NECK_LENGTH/2 + LENGHT_TO_LINE,0); // Later rotated with neckRotation
 	// Later note positions can be initialized to NOTES_POS_0 + n*NOTES_POS_DELTA
 	var NOTES_POS_DELTA = new THREE.Vector3(NECK_WIDTH / 5, 0, 0); // Later rotated with neckRotation 
 	var LENGHT_TO_LINE = NECK_LENGTH / 2 + NECK_LENGTH / 10;
@@ -71,18 +72,33 @@ function Graphics() {
 		
 		this.camera.lookAt(new THREE.Vector3(0, 0, -1));
 		this.camera.position.z = 5;
-		globals.renderManager.add('game', this.scene, this.camera, render_game, {notes: this.notes, neckDir: neckDir});
+		globals.renderManager.add('game', this.scene, this.camera, render_game, {game: this.game, notes: this.notes, neckDir: neckDir});
 		globals.renderManager.setCurrent('game');
 	}
 
 	function render_game(delta, renderer) {
+		var game = this.objects.game;
+		getNotesToShow();		
 		for (var i = 0; i < this.objects.notes.length; i += 1) {
 			var dir = this.objects.neckDir;
-			this.objects.notes[i].mesh.translateX(delta*dir.x);
-			this.objects.notes[i].mesh.translateZ(delta*dir.y);
-			this.objects.notes[i].mesh.translateY(delta*dir.z);
+			this.objects.notes[i].mesh.translateX(game.SPEED*delta*dir.x);
+			this.objects.notes[i].mesh.translateZ(game.SPEED*delta*dir.y);
+			this.objects.notes[i].mesh.translateY(game.SPEED*delta*dir.z);
 		}
 		renderer.render(this.scene, this.camera);
+
+		function getNotesToShow() {
+			var i = game.song.notes.lastShownIndex + 1;
+			for (; i < game.song.notes.length; i++) {
+				note = game.song.notes[i];
+				if (note.start > game.timeToShow) break;
+			}
+			// Push all he notes to be shown to the renderer's list and show them
+			for (var j = game.song.notes.lastShownindex + 1; j < i; j++) {
+				this.game.show_note(note);
+				this.object.notes.push(game.song.notes[i]);
+			}
+		}
 	}
 
 	this.create_note_geometries = function(notes) {
@@ -131,8 +147,4 @@ function Graphics() {
 		note.mesh = noteMesh;
 	}
 	
-	this.show_note = function(note) {
-		this.scene.add(note);
-		this.notes.push(note);
-	}	
 }
