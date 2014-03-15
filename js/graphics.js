@@ -6,6 +6,7 @@ function Graphics() {
 	var NOTES_POS_0 = new THREE.Vector3(-NECK_WIDTH/2 + NECK_WIDTH / 10, -NECK_LENGTH/2, 0); // Later rotated with neckRotation
 	// Later note positions can be initialized to NOTES_POS_0 + n*NOTES_POS_DELTA
 	var NOTES_POS_DELTA = new THREE.Vector3(NECK_WIDTH / 5, 0, 0); // Later rotated with neckRotation 
+	var LENGHT_TO_LINE = NECK_LENGTH / 2 + NECK_LENGTH / 10;
 
 	var notePoints = [];
 	var noteMiddle = 0.5;
@@ -42,12 +43,22 @@ function Graphics() {
 	this.init_scene = function () {
 		this.scene = new THREE.Scene();
 		this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-		var geometry = new THREE.CubeGeometry(NECK_WIDTH,NECK_LENGTH,0);
-		var material = new THREE.MeshPhongMaterial({color: 0x11ff11});
-		
-		this.cube = new THREE.Mesh(geometry, material);
-		this.cube.rotation = neckEuler;
-		this.scene.add(this.cube);
+		var neck_geometry = new THREE.CubeGeometry(NECK_WIDTH,NECK_LENGTH,0);
+		var neck_material = new THREE.MeshPhongMaterial({color: 0x11ff11});
+
+		this.neck = new THREE.Mesh(neck_geometry, neck_material);
+		this.neck.rotation = neckEuler;
+		this.scene.add(this.neck);
+
+		var line_geometry = new THREE.CubeGeometry(NECK_WIDTH, 0.5, 0.5);
+		var line_material = new THREE.MeshPhongMaterial({color: 0x0000ff});
+		this.line = new THREE.Mesh(line_geometry, line_material);
+
+		var LINE_POS = new THREE.Vector3(0,-NECK_LENGTH/2 + LENGHT_TO_LINE,0);
+		LINE_POS.applyEuler(neckEuler);
+
+		this.line.position.copy(LINE_POS);
+		this.scene.add(this.line);
 
 		//this.light = new THREE.PointLight( 0xff0000, 10, 100);
 		//this.light.position.set(5,5,10);
