@@ -11,6 +11,9 @@ handlers:
 - url: /files
   static_dir: files
 
+- url: /audio
+  static_dir: audio
+
 - url: /.*
   script: dmp-project.app
 
