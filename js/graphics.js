@@ -74,7 +74,7 @@ function Graphics() {
 		renderer.render(this.scene, this.camera);
 	}
 
-	this.create_note_geometries(notes) {
+	this.create_note_geometries = function(notes) {
 		for (var i = 0; i < notes.length; i++) {
 			this.create_note_geometry(notes[i]);
 		}
