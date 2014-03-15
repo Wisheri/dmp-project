@@ -95,19 +95,19 @@ function Graphics() {
 		var n = 0;
 		switch(note.label)
 		{
-		case 'A':
+		case '0':
 			n = 0;
 			break;
-		case 'B':
+		case '1':
 			n = 1;
 			break;
-		case 'C':
+		case '2':
 			n = 2;
 			break;
-		case 'D':
+		case '3':
 			n = 3;
 			break;
-		case 'E':
+		case '4':
 			n = 4;
 			break;
 		default:

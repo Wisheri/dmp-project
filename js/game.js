@@ -1,13 +1,11 @@
 function Game(song) {
 	this.graphics = new Graphics();
 	this.song = song;
-	for (var i = 0; i < song.notes.length; i++) {
-		song.notes[i] = this.graphics.
 	var pressedNotes = new Array();
+	this.graphics.greate_note_geometries(song.notes);
 	var nextNote = 0;
 	var startTime;
 	this.graphics.init_scene();
-	this.graphics.create_note('A', 4);
 
 	function currentTime() {
 		var d = new Date();

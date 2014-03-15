@@ -33,7 +33,7 @@ function Song(text) {
 			var currentChar = noteStr.charAt(i);
 			if ( ['A', 'B', 'C', 'D', 'E'].indexOf(currentChar) >= 0 ) 
 			{
-				this.notes.push(new Note(currentChar, currentTime, currentTime + noteLen));
+				this.notes.push(new Note(globals.labels[currentChar], currentTime, currentTime + noteLen));
 			}
 			currentTime += noteLen;
 		}
