@@ -2,7 +2,7 @@ function Game(song) {
 	this.graphics = new Graphics();
 	this.song = song;
 	var pressedNotes = new Array();
-	this.graphics.greate_note_geometries(song.notes);
+	this.graphics.create_note_geometries(song.notes);
 	var nextNote = 0;
 	var startTime;
 	this.graphics.init_scene();
@@ -39,19 +39,19 @@ function Game(song) {
 		e.preventDefault();
 		var keyCode = e.keyCode;
 		if (keyCode == 49) {
-			globals.game.graphics.create_note('A', len);
+			globals.game.graphics.show_note('A', len);
 		}
 		else if (keyCode == 50) {
-			globals.game.graphics.create_note('B', len);
+			globals.game.graphics.show_note('B', len);
 		}
 		else if (keyCode == 51) {
-			globals.game.graphics.create_note('C', len);
+			globals.game.graphics.show_note('C', len);
 		}
 		else if (keyCode == 52) {
-			globals.game.graphics.create_note('D', len);
+			globals.game.graphics.show_note('D', len);
 		}
 		else if (keyCode == 53) {
-			globals.game.graphics.create_note('E', len);
+			globals.game.graphics.show_note('E', len);
 		}
 		return false;
 	}

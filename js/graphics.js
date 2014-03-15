@@ -67,9 +67,9 @@ function Graphics() {
 	function render_game(delta, renderer) {
 		for (var i = 0; i < this.objects.notes.length; i += 1) {
 			var dir = this.objects.neckDir;
-			this.objects.notes[i].translateX(delta*dir.x);
-			this.objects.notes[i].translateZ(delta*dir.y);
-			this.objects.notes[i].translateY(delta*dir.z);
+			this.objects.notes[i].mesh.translateX(delta*dir.x);
+			this.objects.notes[i].mesh.translateZ(delta*dir.y);
+			this.objects.notes[i].mesh.translateY(delta*dir.z);
 		}
 		renderer.render(this.scene, this.camera);
 	}
@@ -119,4 +119,9 @@ function Graphics() {
 		
 		note.mesh = noteMesh;
 	}
+	
+	this.show_note = function(note) {
+		this.scene.add(note);
+		this.notes.push(note);
+	}	
 }
