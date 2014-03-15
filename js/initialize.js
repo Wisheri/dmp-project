@@ -9,6 +9,8 @@ animate();
 
 function startGame(song) {
 	globals.game = new Game(song);
+	var example_song = document.getElementById('example_song');
+	example_song.play();
 	animate();
 }
 
