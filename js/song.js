@@ -24,8 +24,12 @@ document.getElementById('fileinput').addEventListener('change', readfile, false)
 
 function Song(text) {
 	this.notes = new Array();
-	
-	function parseNotes(noteStr) {
+	this.parseNotes(text);	
+	startGame(this);
+}
+
+Song.prototype = {
+	parseNotes: function(noteStr) {
 		var noteLen = 1000;
 		var currentTime = 0;
 		for (var i=0;i<noteStr.length;i++) 
@@ -37,9 +41,7 @@ function Song(text) {
 			}
 			currentTime += noteLen;
 		}
-	}
-	startGame(this);
-}
+}}
 
 function Note(label, start, end) {
 	this.label = label;

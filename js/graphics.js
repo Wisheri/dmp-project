@@ -4,10 +4,10 @@ function Graphics(game) {
 	var NECK_WIDTH = 8;
 	var NECK_LENGTH = 15;
 	var NOTE_WIDTH = 1.0; // This depends on the shape of the note!	
-	var NOTES_POS_0 = new THREE.Vector3(-NECK_WIDTH/2 + NECK_WIDTH / 10, -NECK_LENGTH/2 + LENGHT_TO_LINE,0); // Later rotated with neckRotation
+	this.LENGTH_TO_LINE = NECK_LENGTH / 2 + NECK_LENGTH / 10;
+	var NOTES_POS_0 = new THREE.Vector3(-NECK_WIDTH/2 + NECK_WIDTH / 10, -NECK_LENGTH/2 + this.LENGTH_TO_LINE,0); // Later rotated with neckRotation
 	// Later note positions can be initialized to NOTES_POS_0 + n*NOTES_POS_DELTA
 	var NOTES_POS_DELTA = new THREE.Vector3(NECK_WIDTH / 5, 0, 0); // Later rotated with neckRotation 
-	var LENGHT_TO_LINE = NECK_LENGTH / 2 + NECK_LENGTH / 10;
 
 	var notePoints = [];
 	var noteMiddle = 0.5;
@@ -55,7 +55,7 @@ function Graphics(game) {
 		var line_material = new THREE.MeshPhongMaterial({color: 0x0000ff});
 		this.line = new THREE.Mesh(line_geometry, line_material);
 
-		var LINE_POS = new THREE.Vector3(0,-NECK_LENGTH/2 + LENGHT_TO_LINE,0);
+		var LINE_POS = new THREE.Vector3(0,-NECK_LENGTH/2 + this.LENGTH_TO_LINE,0);
 		LINE_POS.applyEuler(neckEuler);
 
 		this.line.position.copy(LINE_POS);
@@ -77,27 +77,32 @@ function Graphics(game) {
 	}
 
 	function render_game(delta, renderer) {
+		var deltaMs = delta * 1000;
 		var game = this.objects.game;
 		getNotesToShow();		
 		for (var i = 0; i < this.objects.notes.length; i += 1) {
 			var dir = this.objects.neckDir;
-			this.objects.notes[i].mesh.translateX(game.SPEED*delta*dir.x);
-			this.objects.notes[i].mesh.translateZ(game.SPEED*delta*dir.y);
-			this.objects.notes[i].mesh.translateY(game.SPEED*delta*dir.z);
+			this.objects.notes[i].mesh.translateX(game.SPEED*deltaMs*dir.x);
+			this.objects.notes[i].mesh.translateZ(game.SPEED*deltaMs*dir.y);
+			this.objects.notes[i].mesh.translateY(game.SPEED*deltaMs*dir.z);
 		}
 		renderer.render(this.scene, this.camera);
 
 		function getNotesToShow() {
 			var i = game.song.notes.lastShownIndex + 1;
-			for (; i < game.song.notes.length; i++) {
+			if (i >= game.song.notes.length) return;
+			var note = game.song.notes[i];
+			var timeToNote = note.start - game.timeFromStart();
+			for (; i < game.song.notes.length && game.timeFromStart() > game.timeToShow; i++) {
 				note = game.song.notes[i];
-				if (note.start > game.timeToShow) break;
+				timeToNote = note.start - game.timeFromStart();
 			}
 			// Push all he notes to be shown to the renderer's list and show them
 			for (var j = game.song.notes.lastShownindex + 1; j < i; j++) {
 				this.game.show_note(note);
 				this.object.notes.push(game.song.notes[i]);
 			}
+			game.song.notes.lastShownIndex = i-1;
 		}
 	}
 
@@ -137,14 +142,12 @@ function Graphics(game) {
 		case '4':
 			n = 4;
 			break;
-		default:
-			note.position.set(-111,-111,-111);
 		}
-		note.position.copy(NOTES_POS_DELTA);
-		note.position.multiplyScalar(n);
-		note.position.add(NOTES_POS_0);
-		
 		note.mesh = noteMesh;
+		note.mesh.position.copy(NOTES_POS_DELTA);
+		note.mesh.position.multiplyScalar(n);
+		note.mesh.position.add(NOTES_POS_0);
+		
 	}
 	
 }

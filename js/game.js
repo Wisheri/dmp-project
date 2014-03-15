@@ -1,9 +1,9 @@
 function Game(song) {
 	var example_song = document.getElementById('example_song');
 	example_song.play();
-	var startTime = currentTime();
+	this.startTime = this.currentTime();
 	this.graphics = new Graphics(this);
-	this.timeToShow = this.NOTE_SPEED * this.graphics.LENGTH_TO_LINE;
+	this.timeToShow =  this.graphics.LENGTH_TO_LINE / this.NOTE_SPEED;
 	this.song = song;
 	var pressedNotes = new Array();
 	this.graphics.create_note_geometries(song.notes);
@@ -11,15 +11,6 @@ function Game(song) {
 	this.graphics.init_scene();
 	this.song.notes.lastShownIndex = 0;	
 
-	function currentTime() {
-		var d = new Date();
-		return d.getTime();
-	}
-
-	function timeFromStart() {
-		var currTime = currentTime();
-		return currTime - startTime;
-	}
 
 	document.onkeydown = function(e) {
 		e = e || window.event;
@@ -62,7 +53,7 @@ function Game(song) {
 }
 
 Game.prototype = {
-	NOTE_SPEED: 2,
+	NOTE_SPEED: 0.002, // 0.002 units/ms
 	
 
 	show_note: function(note) {
@@ -70,5 +61,15 @@ Game.prototype = {
 		note.mesh.translateOnAxis(new THREE.Vector3(0, 0, 1), timeDiff * NOTE_SPEED);
 		this.scene.add(note);
 		this.notes.push(note);
-	}	
+	},	
+
+	currentTime: function() {
+		var d = new Date();
+		return d.getTime();
+	},
+
+	timeFromStart: function() {
+		var currTime = this.currentTime();
+		return currTime - this.startTime;
+	}
 }
