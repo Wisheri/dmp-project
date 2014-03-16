@@ -104,7 +104,6 @@ function Graphics(game) {
 			for (var j = game.song.notes.lastShownIndex + 1; j < i; j++) {
 				note = game.song.notes[j];
 				game.show_note(note);
-				game.graphics.notes.push(game.song.notes[i]);
 			}
 			game.song.notes.lastShownIndex = i-1;
 		}

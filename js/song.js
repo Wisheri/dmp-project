@@ -39,8 +39,8 @@ Song.prototype = {
 			{
 				var DBG_label = globals.labels[currentChar];
 				this.notes.push(new Note(globals.labels[currentChar], currentTime, currentTime + noteLen));
+				currentTime += noteLen;
 			}
-			currentTime += noteLen;
 		}
 }}
 

@@ -9,7 +9,7 @@ function Game(song) {
 	this.graphics.create_note_geometries(song.notes);
 	var nextNote = 0;
 	this.graphics.init_scene();
-	this.song.notes.lastShownIndex = 0;	
+	this.song.notes.lastShownIndex = -1;	
 
 
 	document.onkeydown = function(e) {
