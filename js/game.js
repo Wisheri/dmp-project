@@ -57,10 +57,10 @@ Game.prototype = {
 	
 
 	show_note: function(note) {
-		var timeDiff = note.start - timeFromStart();
-		note.mesh.translateOnAxis(new THREE.Vector3(0, 0, 1), timeDiff * NOTE_SPEED);
-		this.scene.add(note);
-		this.notes.push(note);
+		var timeDiff = note.start - this.timeFromStart();
+		note.mesh.translateOnAxis(new THREE.Vector3(0, 0, -1), timeDiff * this.NOTE_SPEED);
+		this.graphics.scene.add(note.mesh);
+		this.graphics.notes.push(note);
 	},	
 
 	currentTime: function() {

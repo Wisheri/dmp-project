@@ -79,7 +79,7 @@ function Graphics(game) {
 	function render_game(delta, renderer) {
 		var deltaMs = delta * 1000;
 		var game = this.objects.game;
-		getNotesToShow();		
+		getNotesToShow();
 		for (var i = 0; i < this.objects.notes.length; i += 1) {
 			var dir = this.objects.neckDir;
 			this.objects.notes[i].mesh.translateX(game.SPEED*deltaMs*dir.x);
@@ -93,14 +93,15 @@ function Graphics(game) {
 			if (i >= game.song.notes.length) return;
 			var note = game.song.notes[i];
 			var timeToNote = note.start - game.timeFromStart();
-			for (; i < game.song.notes.length && game.timeFromStart() > game.timeToShow; i++) {
+			for (; i < game.song.notes.length && timeToNote < game.timeToShow; i++) {
 				note = game.song.notes[i];
 				timeToNote = note.start - game.timeFromStart();
 			}
 			// Push all he notes to be shown to the renderer's list and show them
-			for (var j = game.song.notes.lastShownindex + 1; j < i; j++) {
-				this.game.show_note(note);
-				this.object.notes.push(game.song.notes[i]);
+			for (var j = game.song.notes.lastShownIndex + 1; j < i; j++) {
+				note = game.song.notes[j];
+				game.show_note(note);
+				game.graphics.notes.push(game.song.notes[i]);
 			}
 			game.song.notes.lastShownIndex = i-1;
 		}
