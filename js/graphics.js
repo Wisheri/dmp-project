@@ -82,9 +82,10 @@ function Graphics(game) {
 		getNotesToShow();
 		for (var i = 0; i < this.objects.notes.length; i += 1) {
 			var dir = this.objects.neckDir;
-			this.objects.notes[i].mesh.translateX(game.SPEED*deltaMs*dir.x);
-			this.objects.notes[i].mesh.translateZ(game.SPEED*deltaMs*dir.y);
-			this.objects.notes[i].mesh.translateY(game.SPEED*deltaMs*dir.z);
+			//this.objects.notes[i].mesh.translateX(game.SPEED*deltaMs*dir.x);
+			//this.objects.notes[i].mesh.translateZ(game.SPEED*deltaMs*dir.y);
+			//this.objects.notes[i].mesh.translateY(game.SPEED*deltaMs*dir.z);
+			this.objects.notes[i].mesh.translateOnAxis(new THREE.Vector3(0, 0, 1), game.SPEED*deltaMs);
 		}
 		renderer.render(this.scene, this.camera);
 
