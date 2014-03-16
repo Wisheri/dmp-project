@@ -37,6 +37,7 @@ Song.prototype = {
 			var currentChar = noteStr.charAt(i);
 			if ( ['A', 'B', 'C', 'D', 'E'].indexOf(currentChar) >= 0 ) 
 			{
+				var DBG_label = globals.labels[currentChar];
 				this.notes.push(new Note(globals.labels[currentChar], currentTime, currentTime + noteLen));
 			}
 			currentTime += noteLen;

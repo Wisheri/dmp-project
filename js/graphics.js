@@ -34,8 +34,8 @@ function Graphics(game) {
 						neckSide.z, neckUp.z, neckCross.z, 0,
 						0, 0, 0, 1);
 	var neckEuler = new THREE.Euler().setFromRotationMatrix(neckRotation);
-	var neckDir = neckUp;
-	var notePath = new THREE.LineCurve(new THREE.Vector3(0, 0, 0), neckDir);
+	this.neckDir = neckUp;
+	var notePath = new THREE.LineCurve(new THREE.Vector3(0, 0, 0), this.neckDir);
 	NOTES_POS_0.applyEuler(neckEuler);
 	NOTES_POS_DELTA.applyEuler(neckEuler);
 
@@ -72,7 +72,7 @@ function Graphics(game) {
 		
 		this.camera.lookAt(new THREE.Vector3(0, 0, -1));
 		this.camera.position.z = 5;
-		globals.renderManager.add('game', this.scene, this.camera, render_game, {game: this.game, notes: this.notes, neckDir: neckDir});
+		globals.renderManager.add('game', this.scene, this.camera, render_game, {game: this.game, notes: this.notes, neckDir: this.neckDir});
 		globals.renderManager.setCurrent('game');
 	}
 
@@ -82,10 +82,12 @@ function Graphics(game) {
 		getNotesToShow();
 		for (var i = 0; i < this.objects.notes.length; i += 1) {
 			var dir = this.objects.neckDir;
+			var note = this.objects.notes[i];
 			//this.objects.notes[i].mesh.translateX(game.SPEED*deltaMs*dir.x);
 			//this.objects.notes[i].mesh.translateZ(game.SPEED*deltaMs*dir.y);
 			//this.objects.notes[i].mesh.translateY(game.SPEED*deltaMs*dir.z);
-			this.objects.notes[i].mesh.translateOnAxis(new THREE.Vector3(0, 0, 1), game.SPEED*deltaMs);
+			note.mesh.translateOnAxis(dir, -game.NOTE_SPEED*deltaMs);
+			var asd = new Object();
 		}
 		renderer.render(this.scene, this.camera);
 
@@ -126,25 +128,7 @@ function Graphics(game) {
 		noteGeometry.applyMatrix(noteTranslationX);
 		var material = new THREE.MeshPhongMaterial({color: 0xff1111});
 		var noteMesh = new THREE.Mesh( noteGeometry, material );
-		var n = 0;
-		switch(note.label)
-		{
-		case '0':
-			n = 0;
-			break;
-		case '1':
-			n = 1;
-			break;
-		case '2':
-			n = 2;
-			break;
-		case '3':
-			n = 3;
-			break;
-		case '4':
-			n = 4;
-			break;
-		}
+		var n = note.label;
 		note.mesh = noteMesh;
 		note.mesh.position.copy(NOTES_POS_DELTA);
 		note.mesh.position.multiplyScalar(n);
