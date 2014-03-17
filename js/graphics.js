@@ -93,14 +93,13 @@ function Graphics(game) {
 
 		function getNotesToShow() {
 			var i = game.song.notes.lastShownIndex + 1;
-			if (i >= game.song.notes.length) return;
-			var note = game.song.notes[i];
-			var timeToNote = note.start - game.timeFromStart();
-			for (; i < game.song.notes.length && timeToNote < game.timeToShow; i++) {
-				note = game.song.notes[i];
-				timeToNote = note.start - game.timeFromStart();
+			while (i < game.song.notes.length) {
+				var note = game.song.notes[i];
+				var timeToNote = note.start - game.timeFromStart();
+				if (timeToNote > game.timeToShow) break;
+				i++;
 			}
-			// Push all he notes to be shown to the renderer's list and show them
+			// Push all the notes to be shown to the renderer's list and show them
 			for (var j = game.song.notes.lastShownIndex + 1; j < i; j++) {
 				note = game.song.notes[j];
 				game.show_note(note);
