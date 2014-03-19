@@ -6,6 +6,12 @@ globals.labels['C'] = 2;
 globals.labels['D'] = 3;
 globals.labels['E'] = 4;
 
+globals.textures = new Array();
+globals.textures['neck'] = THREE.ImageUtils.loadTexture('../images/metalbox_full.png');
+globals.textures['neck'].wrapS = THREE.RepeatWrapping;
+globals.textures['neck'].wrapT = THREE.RepeatWrapping;
+globals.textures['neck'].repeat.set(4,4);
+
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
