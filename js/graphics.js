@@ -45,7 +45,15 @@ function Graphics(game) {
 		this.scene = new THREE.Scene();
 		this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
 		var neck_geometry = new THREE.CubeGeometry(NECK_WIDTH,NECK_LENGTH,0);
-		var neck_material = new THREE.MeshPhongMaterial({color: 0x11ff11});
+		//var neck_material = new THREE.MeshPhongMaterial({color: 0x11ff11});
+		//var neck_material = new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture('../images/metalbox_full.png')});
+
+		var neck_texture = THREE.ImageUtils.loadTexture("http://dmp-project.appspot.com/images/metalbox_full.png");
+		neck_texture.wrapS = THREE.RepeatWrapping;
+		neck_texture.wrapT = THREE.RepeatWrapping;
+		neck_texture.repeat.set(4,4);
+		var neck_material = new THREE.MeshBasicMaterial({map: neck_texture});	
+
 
 		this.neck = new THREE.Mesh(neck_geometry, neck_material);
 		this.neck.rotation = neckEuler;
