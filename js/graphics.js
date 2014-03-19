@@ -35,7 +35,6 @@ function Graphics(game) {
 						0, 0, 0, 1);
 	var neckEuler = new THREE.Euler().setFromRotationMatrix(neckRotation);
 	this.neckDir = neckUp;
-	var notePath = new THREE.LineCurve(new THREE.Vector3(0, 0, 0), this.neckDir);
 	NOTES_POS_0.applyEuler(neckEuler);
 	NOTES_POS_DELTA.applyEuler(neckEuler);
 
@@ -83,11 +82,7 @@ function Graphics(game) {
 		for (var i = 0; i < this.objects.notes.length; i += 1) {
 			var dir = this.objects.neckDir;
 			var note = this.objects.notes[i];
-			//this.objects.notes[i].mesh.translateX(game.SPEED*deltaMs*dir.x);
-			//this.objects.notes[i].mesh.translateZ(game.SPEED*deltaMs*dir.y);
-			//this.objects.notes[i].mesh.translateY(game.SPEED*deltaMs*dir.z);
 			note.mesh.translateOnAxis(dir, -game.NOTE_SPEED*deltaMs);
-			var asd = new Object();
 		}
 		renderer.render(this.scene, this.camera);
 
@@ -115,9 +110,12 @@ function Graphics(game) {
 	}
 
 	// Call this for each note after initializing graphics
-	this.create_note_geometry = function(note) {
+	this.create_note_geometry = function(note) { 
+		var pathVec2 = this.neckDir.clone().multiplyScalar(this.game.NOTE_SPEED * note.length);
+		var notePath = new THREE.LineCurve(new THREE.Vector3(0, 0, 0), pathVec2);
+		//notePath.v2.multiplyScalar(this.game.NOTE_SPEED * note.length);
 		var options = {
-			amount: note.length, curveSegments: 3,
+			amount: 0, curveSegments: 3,
 			bevelEnabled: false,
 			material: 0, extrudeMaterial: 1,
 			extrudePath: notePath
