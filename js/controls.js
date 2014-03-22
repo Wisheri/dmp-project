@@ -1,6 +1,6 @@
 function Controls(game) {
 	this.game = game;
-	
+	this.buttonsDown = [false, false, false, false, false];	
 }
 
 Controls.prototype = {
@@ -29,20 +29,54 @@ document.onkeydown = function(e) {
 		return false;
 	}
 	if (keyCode == globals.controls.labelToKeyMap[0]) {
-		globals.controls.keyPressed(0);
+		globals.controls.buttonsDown[0] = true;
 	}
 	else if (keyCode == globals.controls.labelToKeyMap[1]) {
-		globals.controls.keyPressed(1);
+		globals.controls.buttonsDown[1] = true;
 	}
 	else if (keyCode == globals.controls.labelToKeyMap[2]) {
-		globals.controls.keyPressed(2);
+		globals.controls.buttonsDown[2] = true;
 	}
 	else if (keyCode == globals.controls.labelToKeyMap[3]) {
-		globals.controls.keyPressed(3);
+		globals.controls.buttonsDown[3] = true;
 	}
 	else if (keyCode == globals.controls.labelToKeyMap[4]) {
-		globals.controls.keyPressed(4);
+		globals.controls.buttonsDown[4] = true;
+	}
+	else if (keyCode == 13) { //ENTER
+		for (var i = 0; i < globals.controls.buttonsDown.length; i++) {
+			var isDown = globals.controls.buttonsDown[i];
+			if (isDown) {
+				globals.controls.keyPressed(i);
+			}
+		}
 	}
 	return false;
 }
 
+document.onkeyup = function(e) {
+	e = e || window.event;
+	e.preventDefault();
+	var keyCode = e.keyCode;
+	if (keyCode == globals.controls.labelToKeyMap[0]) {
+		globals.controls.buttonsDown[0] = false;
+		globals.game.stopNote(0);
+	}
+	else if (keyCode == globals.controls.labelToKeyMap[1]) {
+		globals.controls.buttonsDown[1] = false;
+		globals.game.stopNote(1);
+	}
+	else if (keyCode == globals.controls.labelToKeyMap[2]) {
+		globals.controls.buttonsDown[2] = false;
+		globals.game.stopNote(2);
+	}
+	else if (keyCode == globals.controls.labelToKeyMap[3]) {
+		globals.controls.buttonsDown[3] = false;
+		globals.game.stopNote(3);
+	}
+	else if (keyCode == globals.controls.labelToKeyMap[4]) {
+		globals.controls.buttonsDown[4] = false;
+		globals.game.stopNote(4);
+	}
+	return false;
+}

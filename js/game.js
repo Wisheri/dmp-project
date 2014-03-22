@@ -1,5 +1,6 @@
 function Game(song) {
 	this.controls = new Controls(this);
+	this.score = 0;
 	globals.controls = this.controls;
 	var example_song = document.getElementById('example_song');
 	example_song.play();
@@ -10,15 +11,16 @@ function Game(song) {
 	this.pressedNotes = new Array();
 	this.graphics.create_note_geometries(song.notes);
 	var nextNote = 0;
-	this.graphics.init_scene();
-	this.song.notes.lastShownIndex = -1;	
+	//this.graphics.init_scene();
+	this.song.notes.lastShownIndex = -1;
+	this.lastUpdateTime = new Object();
 
 
 }
 
 Game.prototype = {
 	NOTE_SPEED: 0.002, // 0.002 units/ms
-	NOTE_ACCURACY: 100, // 100ms accuracy required for the player to hit the notes	
+	NOTE_ACCURACY: 300, // 300ms accuracy required for the player to hit the notes	
 
 	show_note: function(note) {
 		var timeDiff = note.start - this.timeFromStart();
@@ -35,5 +37,31 @@ Game.prototype = {
 	timeFromStart: function() {
 		var currTime = this.currentTime();
 		return currTime - this.startTime;
+	},
+
+	stopNote: function(label) {
+		for (var i = 0; i < this.pressedNotes.length; i++) {
+			if (this.pressedNotes[i].label == label) {
+				this.pressedNotes[i].isPressed = false;
+				var values = { color: new THREE.Color(0xff0000) };
+				this.pressedNotes[i].mesh.material.setValues(values);
+				this.pressedNotes.splice(i, 1);
+			}
+		}
+	},
+	
+	updateScores: function() {
+		var timeFromStart = this.timeFromStart();
+		for (var i = 0; i < this.pressedNotes.length; i++) {
+			if (this.pressedNotes[i].isPressed) {
+				var afterEnd = Math.max(0, timeFromStart - this.pressedNotes[i].end);
+				var beforeStart = Math.max(0, this.pressedNotes[i].start - timeFromStart);
+				//var fromStartToLastUpdate = Math.max(0, this.lastUpdateTime - this.pressedNotes[i].start);
+				var afterLastUpdate = Math.max(0, timeFromStart - this.lastUpdateTime);
+
+				this.scores += afterLastUpdate - afterEnd - beforeStart;
+			}
+		}
+		this.lastUpdateTime = timeFromStartme = timeFromStart;
 	}
 }
