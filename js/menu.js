@@ -63,7 +63,6 @@ function Menu() {
 
 			var song_request = new XMLHttpRequest();
 			song_request.open("get", "files/abc1.txt", false);
-			song_request.setRequestHeader("User-Agent", navigator.userAgent);
 			song_request.send(null);
 
 			if (song_request.status == 200){
