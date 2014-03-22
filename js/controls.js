@@ -21,14 +21,30 @@ Controls.prototype = {
 
 }
 
+function menukeydown(keyCode){
+	if (keyCode == 13 /*ENTER*/) {
+		var song_request = new XMLHttpRequest();
+		song_request.open("get", "files/abc1.txt", false);
+		song_request.send(null);
+
+		if (song_request.status == 200){
+			globals.started = true; //Signaling that the game has started.
+
+			new Song(song_request.responseText);
+		}
+			
+		else alert("Error executing XMLHttpRequest call!");
+	}
+}
+
 document.onkeydown = function(e) {
 	e = e || window.event;
 	e.preventDefault();
 	var keyCode = e.keyCode;
-	if (global.started == false) { //Menu
-		return false;
+	if (globals.started == false){
+		menukeydown(keyCode);
 	}
-	if (keyCode == globals.controls.labelToKeyMap[0]) {
+	else if (keyCode == globals.controls.labelToKeyMap[0]) {
 		globals.controls.buttonsDown[0] = true;
 	}
 	else if (keyCode == globals.controls.labelToKeyMap[1]) {

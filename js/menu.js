@@ -55,26 +55,6 @@ function Menu() {
 	globals.renderManager.add('menu', this.scene, this.camera, render_menu, {text: this.hello_text});
 	globals.renderManager.setCurrent('menu');
 
-	document.onkeydown = function(e) {
-		e = e || window.event;
-		e.preventDefault();
-		var keyCode = e.keyCode;
-		if (keyCode == 13 /*ENTER*/ && globals.started == false){
-
-			var song_request = new XMLHttpRequest();
-			song_request.open("get", "files/abc1.txt", false);
-			song_request.send(null);
-
-			if (song_request.status == 200){
-				globals.started = true; //Signaling that the game has started.
-
-				new Song(song_request.responseText);
-			}
-			
-			else alert("Error executing XMLHttpRequest call!");
-		}
-	}
-
 	function render_menu(delta, renderer) {
 		this.objects.text.rotation.x += delta;
 		renderer.render(this.scene, this.camera);
