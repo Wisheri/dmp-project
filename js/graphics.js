@@ -43,8 +43,22 @@ function Graphics(game) {
 	this.notes = new Array();
 	
 	this.init_scene = function () {
+		/* -------*/
+		/*	Scene */
+		/* -------*/
+
 		this.scene = new THREE.Scene();
+		
+		/* -------*/
+		/* Camera */
+		/* -------*/
+
 		this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+		
+		/* ----------- */
+		/* Guitar neck */
+		/* ----------- */
+
 		var neck_geometry = new THREE.CubeGeometry(NECK_WIDTH,NECK_LENGTH,0);
 		//var neck_material = new THREE.MeshPhongMaterial({color: 0x11ff11});
 		//var neck_material = new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture('../images/metalbox_full.png')});
@@ -55,6 +69,10 @@ function Graphics(game) {
 		this.neck.rotation = neckEuler;
 		this.scene.add(this.neck);
 
+		/* ----------- */
+		/*    Line     */
+		/* ----------- */
+
 		var line_geometry = new THREE.CubeGeometry(NECK_WIDTH, 0.5, 0.5);
 		var line_material = new THREE.MeshPhongMaterial({color: 0x0000ff});
 		this.line = new THREE.Mesh(line_geometry, line_material);
@@ -64,6 +82,20 @@ function Graphics(game) {
 
 		this.line.position.copy(LINE_POS);
 		this.scene.add(this.line);
+
+		/* ------------ */
+		/*  Background  */
+		/* ------------ */
+
+		var background_geometry = new THREE.CubeGeometry(15,10,-10);
+		var background_material = new THREE.MeshBasicMaterial({map: globals.textures['background']});
+
+		this.background = new THREE.Mesh(background_geometry, background_material);
+		this.scene.add(this.background);	
+
+		/* ----------- */
+		/*    Light    */
+		/* ----------- */
 
 		//this.light = new THREE.PointLight( 0xff0000, 10, 100);
 		//this.light.position.set(5,5,10);

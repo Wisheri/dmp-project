@@ -12,6 +12,8 @@ globals.textures['neck'].wrapS = THREE.RepeatWrapping;
 globals.textures['neck'].wrapT = THREE.RepeatWrapping;
 globals.textures['neck'].repeat.set(4,4);
 
+globals.textures['background'] = THREE.ImageUtils.loadTexture('../images/8886.jpg');
+
 globals.started = false;
 
 var renderer = new THREE.WebGLRenderer();
