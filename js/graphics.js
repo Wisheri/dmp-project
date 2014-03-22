@@ -87,7 +87,7 @@ function Graphics(game) {
 		/*  Background  */
 		/* ------------ */
 
-		var background_geometry = new THREE.CubeGeometry(10,10,-10);
+		var background_geometry = new THREE.CubeGeometry(15,10,-10);
 		var background_material = new THREE.MeshBasicMaterial({map: globals.textures['background']});
 
 		this.background = new THREE.Mesh(background_geometry, background_material);
