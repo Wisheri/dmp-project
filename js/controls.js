@@ -25,6 +25,9 @@ document.onkeydown = function(e) {
 	e = e || window.event;
 	e.preventDefault();
 	var keyCode = e.keyCode;
+	if (global.started == false) { //Menu
+		return false;
+	}
 	if (keyCode == globals.controls.labelToKeyMap[0]) {
 		globals.controls.keyPressed(0);
 	}
