@@ -16,6 +16,7 @@ Controls.prototype = {
 			closestNote.mesh.material.setValues(values);
 			closestNote.isPressed = true;
 		}
+		setTimeout(this.game.stopNote(label), closestNote.length);
 	}
 
 
