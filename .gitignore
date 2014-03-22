@@ -3,3 +3,6 @@
 
 #Batch for running the server on my machine
 runserver.bat
+
+*.pyc
+*.swp
