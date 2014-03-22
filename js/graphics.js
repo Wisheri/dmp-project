@@ -8,6 +8,8 @@ function Graphics(game) {
 	var NOTES_POS_0 = new THREE.Vector3(-NECK_WIDTH/2 + NECK_WIDTH / 10, -NECK_LENGTH/2 + this.LENGTH_TO_LINE,0); // Later rotated with neckRotation
 	// Later note positions can be initialized to NOTES_POS_0 + n*NOTES_POS_DELTA
 	var NOTES_POS_DELTA = new THREE.Vector3(NECK_WIDTH / 5, 0, 0); // Later rotated with neckRotation 
+	
+	this.score3d = new Object();
 
 	var notePoints = [];
 	var noteMiddle = 0.5;
@@ -134,5 +136,64 @@ function Graphics(game) {
 		note.mesh.position.add(NOTES_POS_0);
 		
 	}
-	
+
+	this.init_score3d = function() {		
+		var text = "0",
+
+				height = 0.1,
+				size = 0.5,
+				hover = 1,
+
+				curveSegments = 2,
+
+				bevelThickness = 0.01,
+				bevelSize = 0.01,
+				bevelSegments = 2,
+				bevelEnabled = true;
+
+		var text_geometry = new THREE.TextGeometry( text, {
+			size: size,
+			height: height,
+			curveSegments: curveSegments,
+			bevelThickness: bevelThickness,
+			bevelSize: bevelSize,
+			bevelEnabled: bevelEnabled, 
+		});
+
+		var text_material = new THREE.MeshPhongMaterial({color: 0x11ff11});
+		this.score3d = new THREE.Mesh(text_geometry, text_material);
+		this.score3d.position = new THREE.Vector3(-6, 2.5, 0);
+		this.scene.add(this.score3d);
+	}
+	this.init_scene();
+	this.init_score3d();
+}
+
+Graphics.prototype = {
+	setScores: function(score) {
+		var text = score.toString(),
+
+				height = 1,
+				size = 10,
+				hover = 1,
+
+				curveSegments = 2,
+
+				bevelThickness = 1,
+				bevelSize = 1,
+				bevelSegments = 2,
+				bevelEnabled = true;
+
+		var text_geometry = new THREE.TextGeometry( text, {
+			size: size,
+			height: height,
+			curveSegments: curveSegments,
+			bevelThickness: bevelThickness,
+			bevelSize: bevelSize,
+			bevelEnabled: bevelEnabled, 
+		});
+
+		this.score3d.geometry = text_geometry;
+
+	}
 }

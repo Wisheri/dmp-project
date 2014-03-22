@@ -1,5 +1,6 @@
 function Game(song) {
 	this.controls = new Controls(this);
+	this.score = 0;
 	globals.controls = this.controls;
 	var example_song = document.getElementById('example_song');
 	example_song.play();
@@ -10,8 +11,9 @@ function Game(song) {
 	this.pressedNotes = new Array();
 	this.graphics.create_note_geometries(song.notes);
 	var nextNote = 0;
-	this.graphics.init_scene();
-	this.song.notes.lastShownIndex = -1;	
+	//this.graphics.init_scene();
+	this.song.notes.lastShownIndex = -1;
+	this.lastUpdateTime = new Object();
 
 
 }
@@ -46,5 +48,20 @@ Game.prototype = {
 				this.pressedNotes.splice(i, 1);
 			}
 		}
+	},
+	
+	updateScores: function() {
+		var timeFromStart = this.timeFromStart();
+		for (var i = 0; i < this.pressedNotes.length; i++) {
+			if (this.pressedNotes[i].isPressed) {
+				var afterEnd = Math.max(0, timeFromStart - this.pressedNotes[i].end);
+				var beforeStart = Math.max(0, this.pressedNotes[i].start - timeFromStart);
+				//var fromStartToLastUpdate = Math.max(0, this.lastUpdateTime - this.pressedNotes[i].start);
+				var afterLastUpdate = Math.max(0, timeFromStart - this.lastUpdateTime);
+
+				this.scores += afterLastUpdate - afterEnd - beforeStart;
+			}
+		}
+		this.lastUpdateTime = timeFromStartme = timeFromStart;
 	}
 }
