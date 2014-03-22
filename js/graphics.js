@@ -173,14 +173,14 @@ Graphics.prototype = {
 	setScores: function(score) {
 		var text = score.toString(),
 
-				height = 1,
-				size = 10,
+				height = 0.1,
+				size = 0.5,
 				hover = 1,
 
 				curveSegments = 2,
 
-				bevelThickness = 1,
-				bevelSize = 1,
+				bevelThickness = 0.01,
+				bevelSize = 0.01,
 				bevelSegments = 2,
 				bevelEnabled = true;
 

@@ -59,9 +59,10 @@ Game.prototype = {
 				//var fromStartToLastUpdate = Math.max(0, this.lastUpdateTime - this.pressedNotes[i].start);
 				var afterLastUpdate = Math.max(0, timeFromStart - this.lastUpdateTime);
 
-				this.scores += afterLastUpdate - afterEnd - beforeStart;
+				this.score += afterLastUpdate - afterEnd - beforeStart;
 			}
 		}
+		this.graphics.setScores(this.score);
 		this.lastUpdateTime = timeFromStartme = timeFromStart;
 	}
 }
