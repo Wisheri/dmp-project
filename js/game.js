@@ -18,7 +18,7 @@ function Game(song) {
 
 Game.prototype = {
 	NOTE_SPEED: 0.002, // 0.002 units/ms
-	NOTE_ACCURACY: 100, // 100ms accuracy required for the player to hit the notes	
+	NOTE_ACCURACY: 300, // 300ms accuracy required for the player to hit the notes	
 
 	show_note: function(note) {
 		var timeDiff = note.start - this.timeFromStart();
@@ -35,5 +35,16 @@ Game.prototype = {
 	timeFromStart: function() {
 		var currTime = this.currentTime();
 		return currTime - this.startTime;
+	},
+
+	stopNote: function(label) {
+		for (var i = 0; i < this.pressedNotes.length; i++) {
+			if (this.pressedNotes[i].label == label) {
+				this.pressedNotes[i].isPressed = false;
+				var values = { color: new THREE.Color(0xff0000) };
+				this.pressedNotes[i].mesh.material.setValues(values);
+				this.pressedNotes.splice(i, 1);
+			}
+		}
 	}
 }
