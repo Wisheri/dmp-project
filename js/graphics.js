@@ -193,7 +193,12 @@ Graphics.prototype = {
 			bevelEnabled: bevelEnabled, 
 		});
 
-		this.score3d.geometry = text_geometry;
+		this.scene.remove(this.score3d);
+
+		var text_material = new THREE.MeshPhongMaterial({color: 0x11ff11});
+		this.score3d = new THREE.Mesh(text_geometry, text_material);
+		this.score3d.position = new THREE.Vector3(-6, 2.5, 0);
+		this.scene.add(this.score3d);
 
 	}
 }

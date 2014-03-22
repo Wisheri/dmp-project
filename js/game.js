@@ -63,6 +63,6 @@ Game.prototype = {
 			}
 		}
 		this.graphics.setScores(this.score);
-		this.lastUpdateTime = timeFromStartme = timeFromStart;
+		this.lastUpdateTime = timeFromStart;
 	}
 }
