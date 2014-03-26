@@ -6,6 +6,8 @@ globals.labels['C'] = 2;
 globals.labels['D'] = 3;
 globals.labels['E'] = 4;
 
+globals.controls = new Controls();
+
 globals.textures = new Array();
 globals.textures['neck'] = THREE.ImageUtils.loadTexture('../images/metalbox_full.png');
 globals.textures['neck'].wrapS = THREE.RepeatWrapping;

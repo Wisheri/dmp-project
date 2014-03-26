@@ -1,5 +1,4 @@
-function Controls(game) {
-	this.game = game;
+function Controls() {
 	this.buttonsDown = [false, false, false, false, false];	
 }
 
@@ -10,13 +9,12 @@ Controls.prototype = {
 	keyPressed: function(label) {
 		var closestNote = globals.song.getClosestNote(label);
 		var timeDiff = Math.abs(globals.game.timeFromStart() - closestNote.start);
-		if (timeDiff < this.game.NOTE_ACCURACY) {
-			this.game.pressedNotes.push(closestNote);
+		if (timeDiff < globals.game.NOTE_ACCURACY) {
+			globals.game.pressedNotes[label] = closestNote;
 			var values = { color: new THREE.Color(0xffff00) };
 			closestNote.mesh.material.setValues(values);
 			closestNote.isPressed = true;
 		}
-		setTimeout(this.game.stopNote(label), closestNote.length);
 	}
 
 

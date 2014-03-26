@@ -1,7 +1,6 @@
 function Game(song) {
-	this.controls = new Controls(this);
+	this.controls = globals.controls; 
 	this.score = 0;
-	globals.controls = this.controls;
 	var example_song = document.getElementById('example_song');
 	example_song.play();
 	this.startTime = this.currentTime();
@@ -9,6 +8,10 @@ function Game(song) {
 	this.timeToShow =  this.graphics.LENGTH_TO_LINE / this.NOTE_SPEED;
 	this.song = song;
 	this.pressedNotes = new Array();
+	// Initialize array to avoid errors
+	for (var i = 0; i < 5; i++) {
+		this.pressedNotes[i] = new Note(0, 0, 0);
+	}
 	this.graphics.create_note_geometries(song.notes);
 	var nextNote = 0;
 	//this.graphics.init_scene();
@@ -40,18 +43,28 @@ Game.prototype = {
 	},
 
 	stopNote: function(label) {
+		this.pressedNotes[label].isPressed = false;
+		var values = { color: new THREE.Color(0xff0000) };
+		this.pressedNotes[label].mesh.material.setValues(values);
+	},
+	
+	update: function() {
+		var timeFromStart = this.timeFromStart();
+		this.updateScores(timeFromStart);
+		this.stopNotes(timeFromStart);
+		this.lastUpdateTime = timeFromStart;
+	},
+
+	stopNotes: function(timeFromStart) {
 		for (var i = 0; i < this.pressedNotes.length; i++) {
-			if (this.pressedNotes[i].label == label) {
-				this.pressedNotes[i].isPressed = false;
-				var values = { color: new THREE.Color(0xff0000) };
-				this.pressedNotes[i].mesh.material.setValues(values);
-				this.pressedNotes.splice(i, 1);
+			var note = this.pressedNotes[i];
+			if (note.end <= timeFromStart && note.isPressed) {
+				stopNote(i);
 			}
 		}
 	},
-	
-	updateScores: function() {
-		var timeFromStart = this.timeFromStart();
+
+	updateScores: function(timeFromStart) {
 		for (var i = 0; i < this.pressedNotes.length; i++) {
 			if (this.pressedNotes[i].isPressed) {
 				var afterEnd = Math.max(0, timeFromStart - this.pressedNotes[i].end);
@@ -63,6 +76,5 @@ Game.prototype = {
 			}
 		}
 		this.graphics.setScores(this.score);
-		this.lastUpdateTime = timeFromStart;
 	}
 }
