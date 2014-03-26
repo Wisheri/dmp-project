@@ -43,9 +43,11 @@ Game.prototype = {
 	},
 
 	stopNote: function(label) {
-		this.pressedNotes[label].isPressed = false;
-		var values = { color: new THREE.Color(0xff0000) };
-		this.pressedNotes[label].mesh.material.setValues(values);
+		if (this.pressedNotes[label].isPressed) {
+			this.pressedNotes[label].isPressed = false;
+			var values = { color: new THREE.Color(0xff0000) };
+			this.pressedNotes[label].mesh.material.setValues(values);
+		}
 	},
 	
 	update: function() {
@@ -59,7 +61,7 @@ Game.prototype = {
 		for (var i = 0; i < this.pressedNotes.length; i++) {
 			var note = this.pressedNotes[i];
 			if (note.end <= timeFromStart && note.isPressed) {
-				stopNote(i);
+				this.stopNote(i);
 			}
 		}
 	},
@@ -68,10 +70,9 @@ Game.prototype = {
 		for (var i = 0; i < this.pressedNotes.length; i++) {
 			if (this.pressedNotes[i].isPressed) {
 				var afterEnd = Math.max(0, timeFromStart - this.pressedNotes[i].end);
-				var beforeStart = Math.max(0, this.pressedNotes[i].start - timeFromStart);
 				//var fromStartToLastUpdate = Math.max(0, this.lastUpdateTime - this.pressedNotes[i].start);
 				var afterLastUpdate = Math.max(0, timeFromStart - this.lastUpdateTime);
-
+				var beforeStart = Math.max(0, Math.min(this.pressedNotes[i].start - this.lastUpdateTime, afterLastUpdate));
 				this.score += afterLastUpdate - afterEnd - beforeStart;
 			}
 		}

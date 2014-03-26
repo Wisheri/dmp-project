@@ -10,6 +10,9 @@ Controls.prototype = {
 		var closestNote = globals.song.getClosestNote(label);
 		var timeDiff = Math.abs(globals.game.timeFromStart() - closestNote.start);
 		if (timeDiff < globals.game.NOTE_ACCURACY) {
+			if (globals.game.pressedNotes[label].isPressed) {
+				globals.game.stopNote(label);
+			}
 			globals.game.pressedNotes[label] = closestNote;
 			var values = { color: new THREE.Color(0xffff00) };
 			closestNote.mesh.material.setValues(values);

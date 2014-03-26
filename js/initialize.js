@@ -34,7 +34,7 @@ function startGame(song) {
 function animate() {
 	requestAnimationFrame(animate);
 	if (globals.started) {
-		globals.game.updateScores();
+		globals.game.update();
 	}
 	globals.renderManager.renderCurrent();
 }
