@@ -4,15 +4,14 @@ function Game(song) {
 	var example_song = document.getElementById('example_song');
 	example_song.play();
 	this.startTime = this.currentTime();
+	this.song = song;
 	this.graphics = new Graphics(this);
 	this.timeToShow =  this.graphics.LENGTH_TO_LINE / this.NOTE_SPEED;
-	this.song = song;
 	this.pressedNotes = new Array();
 	// Initialize array to avoid errors
 	for (var i = 0; i < 5; i++) {
 		this.pressedNotes[i] = new Note(0, 0, 0);
 	}
-	this.graphics.create_note_geometries(song.notes);
 	var nextNote = 0;
 	//this.graphics.init_scene();
 	this.song.notes.lastShownIndex = -1;
@@ -28,7 +27,13 @@ Game.prototype = {
 	show_note: function(note) {
 		var timeDiff = note.start - this.timeFromStart();
 		note.mesh.translateOnAxis(this.graphics.neckDir, timeDiff * this.NOTE_SPEED);
+		
+		var vecDelta = this.graphics.neckDir.clone();
+		vecDelta.multiplyScalar(timeDiff * this.NOTE_SPEED);
+		note.head_mesh.position.add(vecDelta);
+
 		this.graphics.scene.add(note.mesh);
+		this.graphics.scene.add(note.head_mesh);
 		this.graphics.notes.push(note);
 	},	
 
@@ -45,8 +50,8 @@ Game.prototype = {
 	stopNote: function(label) {
 		if (this.pressedNotes[label].isPressed) {
 			this.pressedNotes[label].isPressed = false;
-			var values = { color: new THREE.Color(0xff0000) };
-			this.pressedNotes[label].mesh.material.setValues(values);
+			this.pressedNotes[label].mesh.material = globals.game.graphics.NOTE_MATERIAL_NOT_PRESSED.clone();
+			this.pressedNotes[label].head_mesh.material = globals.game.graphics.NOTE_MATERIAL_NOT_PRESSED.clone();
 		}
 	},
 	

@@ -10,19 +10,23 @@ function Graphics(game) {
 	var NOTES_POS_DELTA = new THREE.Vector3(NECK_WIDTH / 5, 0, 0); // Later rotated with neckRotation 
 	
 	this.score3d = new Object();
+	this.note_head_geometry = new Object();
 
 	var notePoints = [];
 	var noteMiddle = 0.5;
 	notePoints.push( new THREE.Vector2 (   0,  0 ) );
-	notePoints.push( new THREE.Vector2 (   0,  0.11 ) );
-	notePoints.push( new THREE.Vector2 (   0.12,  0.14 ) );
-	notePoints.push( new THREE.Vector2 (   0.22,  0.26 ) );
-	notePoints.push( new THREE.Vector2 (   0.77,  0.26 ) );
-	notePoints.push( new THREE.Vector2 (   0.87,  0.14 ) );
-	notePoints.push( new THREE.Vector2 (   0.99,  0.11 ) );
+	var notePath = new THREE.Path(notePoints);
+	notePoints.push( new THREE.Vector2 (   0,  0.05 ) );
+	notePoints.push( new THREE.Vector2 (   0.12,  0.07 ) );
+	notePoints.push( new THREE.Vector2 (   0.22,  0.13 ) );
+	notePoints.push( new THREE.Vector2 (   0.77,  0.13 ) );
+	notePoints.push( new THREE.Vector2 (   0.87,  0.07 ) );
+	notePoints.push( new THREE.Vector2 (   0.99,  0.05 ) );
 	notePoints.push( new THREE.Vector2 (   0.99,  0 ) );
+	notePath.splineThru(notePoints);
 	
-	var noteShape = new THREE.Shape( notePoints );
+	//var noteShape = new THREE.Shape( notePoints );
+	var noteShape = notePath.toShapes(true)[0];
 	var noteTranslationX = new THREE.Matrix4(1, 0, 0, noteMiddle,
 						0, 1, 0, 0,
 						0, 0, 1, 0,
@@ -109,7 +113,6 @@ function Graphics(game) {
 		this.camera.lookAt(new THREE.Vector3(0, 0, -1));
 		this.camera.position.z = 5;
 		globals.renderManager.add('game', this.scene, this.camera, render_game, {game: this.game, notes: this.notes, neckDir: this.neckDir});
-		globals.renderManager.setCurrent('game');
 	}
 
 	function render_game(delta, renderer) {
@@ -120,6 +123,9 @@ function Graphics(game) {
 			var dir = this.objects.neckDir;
 			var note = this.objects.notes[i];
 			note.mesh.translateOnAxis(dir, -game.NOTE_SPEED*deltaMs);
+			var vecDelta = dir.clone();
+			vecDelta.multiplyScalar(-game.NOTE_SPEED*deltaMs);
+			note.head_mesh.position.add(vecDelta);
 		}
 		renderer.render(this.scene, this.camera);
 
@@ -152,21 +158,27 @@ function Graphics(game) {
 		var notePath = new THREE.LineCurve(new THREE.Vector3(0, 0, 0), pathVec2);
 		//notePath.v2.multiplyScalar(this.game.NOTE_SPEED * note.length);
 		var options = {
-			amount: 0, curveSegments: 3,
+			amount: 0, curveSegments: 7,
 			bevelEnabled: false,
 			material: 0, extrudeMaterial: 1,
 			extrudePath: notePath
 		};
 		var noteGeometry = new THREE.ExtrudeGeometry( noteShape, options );
 		noteGeometry.applyMatrix(noteTranslationX);
-		var material = new THREE.MeshPhongMaterial({color: 0xff1111});
-		var noteMesh = new THREE.Mesh( noteGeometry, material );
+		var noteMesh = new THREE.Mesh( noteGeometry, this.NOTE_MATERIAL_NOT_PRESSED.clone() );
 		var n = note.label;
 		note.mesh = noteMesh;
 		note.mesh.position.copy(NOTES_POS_DELTA);
 		note.mesh.position.multiplyScalar(n);
 		note.mesh.position.add(NOTES_POS_0);
 		
+		// Create the head mesh
+		note.head_mesh = new THREE.Mesh( this.note_head_geometry, this.NOTE_MATERIAL_NOT_PRESSED.clone() );
+		note.head_mesh.rotation = neckEuler.clone();
+		note.head_mesh.rotateOnAxis(new THREE.Vector3(1, 0, 0), -Math.PI/2);
+		note.head_mesh.position.copy(NOTES_POS_DELTA);
+		note.head_mesh.position.multiplyScalar(n);
+		note.head_mesh.position.add(NOTES_POS_0);
 	}
 
 	this.init_score3d = function() {		
@@ -197,11 +209,31 @@ function Graphics(game) {
 		this.score3d.position = new THREE.Vector3(-6, 2.5, 0);
 		this.scene.add(this.score3d);
 	}
+
+	this.load_geometries = function() {
+		var loader = new THREE.JSONLoader(true);
+		loader.onLoadComplete = this.geometries_ready;
+		loader.load( "../files/note_model.js", this.load_note_head_geometry );
+	}
+
+	this.load_note_head_geometry = function(geometry) {
+		globals.game.graphics.note_head_geometry = geometry;
+	}
+
+	this.geometries_ready = function() {
+		globals.game.graphics.create_note_geometries(globals.song.notes);
+		globals.renderManager.setCurrent('game');
+	}
+
 	this.init_scene();
 	this.init_score3d();
+	this.load_geometries();
 }
 
 Graphics.prototype = {
+	NOTE_MATERIAL_NOT_PRESSED: new THREE.MeshPhongMaterial({color: 0xffff11, specular: 0xffff11, shininess: 10}),
+	NOTE_MATERIAL_PRESSED: new THREE.MeshPhongMaterial({color: 0xffff11, specular: 0xffffff, emissive: 0x999999, shininess: 100}),
+	
 	setScores: function(score) {
 		var text = score.toString(),
 

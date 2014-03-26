@@ -14,8 +14,8 @@ Controls.prototype = {
 				globals.game.stopNote(label);
 			}
 			globals.game.pressedNotes[label] = closestNote;
-			var values = { color: new THREE.Color(0xffff00) };
-			closestNote.mesh.material.setValues(values);
+			closestNote.mesh.material = globals.game.graphics.NOTE_MATERIAL_PRESSED.clone();
+			closestNote.head_mesh.material = globals.game.graphics.NOTE_MATERIAL_PRESSED.clone();
 			closestNote.isPressed = true;
 		}
 	}
