@@ -10,7 +10,6 @@ function Graphics(game) {
 	var NOTES_POS_DELTA = new THREE.Vector3(NECK_WIDTH / 5, 0, 0); // Later rotated with neckRotation 
 	
 	this.score3d = new Object();
-	this.note_head_geometry = new Object();
 
 	var notePoints = [];
 	var noteMiddle = 0.5;
@@ -69,8 +68,14 @@ function Graphics(game) {
 
 		var neck_material = new THREE.MeshPhongMaterial({map: globals.textures['neck']});	
 
-		this.neck = new THREE.Mesh(neck_geometry, neck_material);
-		this.neck.rotation = neckEuler;
+		//this.neck = new THREE.Mesh(neck_geometry, neck_material);
+		this.neck = new THREE.Mesh(globals.geometries.guitar_geometry, globals.materials.guitar_material);
+		this.neck.geometry.applyMatrix(this.NECK_SCALE);
+		this.neck.geometry.applyMatrix(this.NECK_SCALE_X);
+		this.neck.rotation = neckEuler.clone();
+		this.neck.rotateOnAxis(new THREE.Vector3(1, 0, 0), -Math.PI/2);
+		this.neck.translateOnAxis(new THREE.Vector3(0, 1, 0), -2.2);
+		this.neck.translateOnAxis(new THREE.Vector3(0, 0, 1), -7);
 		this.scene.add(this.neck);
 
 		/* ----------- */
@@ -173,7 +178,7 @@ function Graphics(game) {
 		note.mesh.position.add(NOTES_POS_0);
 		
 		// Create the head mesh
-		note.head_mesh = new THREE.Mesh( this.note_head_geometry, this.NOTE_MATERIAL_NOT_PRESSED.clone() );
+		note.head_mesh = new THREE.Mesh( globals.geometries.note_head_geometry, this.NOTE_MATERIAL_NOT_PRESSED.clone() );
 		note.head_mesh.rotation = neckEuler.clone();
 		note.head_mesh.rotateOnAxis(new THREE.Vector3(1, 0, 0), -Math.PI/2);
 		note.head_mesh.position.copy(NOTES_POS_DELTA);
@@ -210,29 +215,23 @@ function Graphics(game) {
 		this.scene.add(this.score3d);
 	}
 
-	this.load_geometries = function() {
-		var loader = new THREE.JSONLoader(true);
-		loader.onLoadComplete = this.geometries_ready;
-		loader.load( "../files/note_model.js", this.load_note_head_geometry );
-	}
-
-	this.load_note_head_geometry = function(geometry) {
-		globals.game.graphics.note_head_geometry = geometry;
-	}
-
-	this.geometries_ready = function() {
-		globals.game.graphics.create_note_geometries(globals.song.notes);
-		globals.renderManager.setCurrent('game');
-	}
-
 	this.init_scene();
 	this.init_score3d();
-	this.load_geometries();
+	this.create_note_geometries(globals.song.notes);
+	globals.renderManager.setCurrent('game');
 }
 
 Graphics.prototype = {
 	NOTE_MATERIAL_NOT_PRESSED: new THREE.MeshPhongMaterial({color: 0xffff11, specular: 0xffff11, shininess: 10}),
 	NOTE_MATERIAL_PRESSED: new THREE.MeshPhongMaterial({color: 0xffff11, specular: 0xffffff, emissive: 0x999999, shininess: 100}),
+	NECK_SCALE: new THREE.Matrix4(5, 0, 0, 0,
+								0, 5, 0, 0,
+								0, 0, 5, 0,
+								0, 0, 0, 0),
+	NECK_SCALE_X: new THREE.Matrix4(1.6, 0, 0, 0,
+								0, 1, 0, 0,
+								0, 0, 1, 0,
+								0, 0, 0, 0),
 	
 	setScores: function(score) {
 		var text = score.toString(),
