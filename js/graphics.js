@@ -1,10 +1,10 @@
 function Graphics(game) {
 	this.game = game;
 	// Constants
-	var NECK_WIDTH = 8;
-	var NECK_LENGTH = 15;
+	var NECK_WIDTH = 5;
+	var NECK_LENGTH = 40;
 	var NOTE_WIDTH = 1.0; // This depends on the shape of the note!	
-	this.LENGTH_TO_LINE = NECK_LENGTH / 2 + NECK_LENGTH / 10;
+	this.LENGTH_TO_LINE = 22;
 	var NOTES_POS_0 = new THREE.Vector3(-NECK_WIDTH/2 + NECK_WIDTH / 10, -NECK_LENGTH/2 + this.LENGTH_TO_LINE,0); // Later rotated with neckRotation
 	// Later note positions can be initialized to NOTES_POS_0 + n*NOTES_POS_DELTA
 	var NOTES_POS_DELTA = new THREE.Vector3(NECK_WIDTH / 5, 0, 0); // Later rotated with neckRotation 
@@ -96,10 +96,11 @@ function Graphics(game) {
 		/*  Background  */
 		/* ------------ */
 
-		var background_geometry = new THREE.CubeGeometry(15,10,-10);
+		var background_geometry = new THREE.CubeGeometry(150,150,0);
 		var background_material = new THREE.MeshBasicMaterial({map: globals.textures['background']});
 
 		this.background = new THREE.Mesh(background_geometry, background_material);
+		this.background.translateOnAxis(new THREE.Vector3(0, 0, 1), -60);
 		this.scene.add(this.background);	
 
 		/* ----------- */
