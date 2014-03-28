@@ -110,7 +110,7 @@ function Graphics(game) {
 		//this.light = new THREE.PointLight( 0xff0000, 10, 100);
 		//this.light.position.set(5,5,10);
 		this.light = new THREE.DirectionalLight(0xffffff, 0.5);
-		this.light.position.set(0, 3.5,5);
+		this.light.position.set(0, 1, 0.5);
 
 		this.scene.add(this.light);
 		//var ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light useful for debugging
@@ -118,12 +118,17 @@ function Graphics(game) {
 		
 		this.camera.lookAt(new THREE.Vector3(0, 0, -1));
 		this.camera.position.z = 5;
-		globals.renderManager.add('game', this.scene, this.camera, render_game, {game: this.game, notes: this.notes, neckDir: this.neckDir});
+		globals.renderManager.add('game', this.scene, this.camera, render_game, 
+				{game: this.game, notes: this.notes, neckDir: this.neckDir, light: this.light});
 	}
 
-	function render_game(delta, renderer) {
+	function render_game(delta, renderer) { 
 		var deltaMs = delta * 1000;
 		var game = this.objects.game;
+
+		// Rotate light
+		this.objects.light.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), delta);		
+
 		getNotesToShow();
 		for (var i = 0; i < this.objects.notes.length; i += 1) {
 			var dir = this.objects.neckDir;
