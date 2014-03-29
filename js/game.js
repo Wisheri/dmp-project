@@ -16,6 +16,7 @@ function Game(song) {
 	//this.graphics.init_scene();
 	this.song.notes.lastShownIndex = -1;
 	this.lastUpdateTime = new Object();
+	this.lastScore = 0;
 
 
 }
@@ -72,7 +73,6 @@ Game.prototype = {
 	},
 
 	updateScores: function(timeFromStart) {
-		/*
 		for (var i = 0; i < this.pressedNotes.length; i++) {
 			if (this.pressedNotes[i].isPressed) {
 				var afterEnd = Math.max(0, timeFromStart - Math.round(this.pressedNotes[i].end));
@@ -82,7 +82,9 @@ Game.prototype = {
 				this.score += afterLastUpdate - afterEnd - beforeStart;
 			}
 		}
-		this.graphics.setScores(this.score);
-		*/
+		if (Math.floor(this.lastScore / 10) < Math.floor(this.score / 10)) {
+			this.graphics.setScores(this.score);
+		}
+		this.lastScore = this.score;
 	}
 }

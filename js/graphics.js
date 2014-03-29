@@ -1,5 +1,7 @@
 function Graphics(game) {
 	this.game = game;
+	this.LINE_POS = new Object();
+	this.particleGroup = new Object();
 	// Constants
 	var NECK_WIDTH = 5;
 	var NECK_LENGTH = 40;
@@ -43,6 +45,10 @@ function Graphics(game) {
 	NOTES_POS_0.applyEuler(neckEuler);
 	NOTES_POS_DELTA.applyEuler(neckEuler);
 
+	var LINE_POS = new THREE.Vector3(0,-NECK_LENGTH/2 + this.LENGTH_TO_LINE,0);
+	LINE_POS.applyEuler(neckEuler);
+	this.LINE_POS = LINE_POS;
+
 	this.notes = new Array();
 	
 	this.init_scene = function () {
@@ -51,7 +57,7 @@ function Graphics(game) {
 		/* -------*/
 
 		this.scene = new THREE.Scene();
-		
+		this.scene.add(this.particleGroup.mesh);	
 		/* -------*/
 		/* Camera */
 		/* -------*/
@@ -86,8 +92,6 @@ function Graphics(game) {
 		var line_material = new THREE.MeshPhongMaterial({color: 0x0000ff});
 		this.line = new THREE.Mesh(line_geometry, line_material);
 
-		var LINE_POS = new THREE.Vector3(0,-NECK_LENGTH/2 + this.LENGTH_TO_LINE,0);
-		LINE_POS.applyEuler(neckEuler);
 
 		this.line.position.copy(LINE_POS);
 		this.scene.add(this.line);
@@ -142,7 +146,7 @@ function Graphics(game) {
 		this.camera.lookAt(new THREE.Vector3(0, 0, -1));
 		this.camera.position.z = 5;
 		globals.renderManager.add('game', this.scene, this.camera, render_game, 
-				{game: this.game, notes: this.notes, neckDir: this.neckDir, light: this.light, backgroundScene: this.backgroundScene, backgroundCamera: this.backgroundCamera});
+				{game: this.game, notes: this.notes, neckDir: this.neckDir, light: this.light, backgroundScene: this.backgroundScene, backgroundCamera: this.backgroundCamera, particleGroup: this.particleGroup});
 
 
 
@@ -151,11 +155,11 @@ function Graphics(game) {
 	function render_game(delta, renderer) { 
 		var deltaMs = delta * 1000;
 		var game = this.objects.game;
-
+		this.objects.particleGroup.tick(delta);
 		// Rotate light
 		this.objects.light.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), delta);		
 
-		getNotesToShow();
+		getNotesToShow(this.objects);
 		for (var i = 0; i < this.objects.notes.length; i += 1) {
 			var dir = this.objects.neckDir;
 			var note = this.objects.notes[i];
@@ -168,8 +172,7 @@ function Graphics(game) {
 		renderer.clear();
 		renderer.render(this.objects.backgroundScene, this.objects.backgroundCamera);
 		renderer.render(this.scene, this.camera);
-
-		function getNotesToShow() {
+		function getNotesToShow(objects) {
 			var i = game.song.notes.lastShownIndex + 1;
 			while (i < game.song.notes.length) {
 				var note = game.song.notes[i];
@@ -180,6 +183,7 @@ function Graphics(game) {
 			// Push all the notes to be shown to the renderer's list and show them
 			for (var j = game.song.notes.lastShownIndex + 1; j < i; j++) {
 				note = game.song.notes[j];
+				objects.particleGroup.emitters[0].disable();
 				game.show_note(note);
 			}
 			game.song.notes.lastShownIndex = i-1;
@@ -250,6 +254,35 @@ function Graphics(game) {
 		this.scene.add(this.score3d);
 	}
 
+	this.init_particle_system = function () {
+		this.particleGroup = new SPE.Group({
+			texture: THREE.ImageUtils.loadTexture('../files/testparticle.png'),
+			maxAge: 3
+		});
+
+		var emitter = new SPE.Emitter({
+			position: this.LINE_POS,
+			positionSpread: new THREE.Vector3(0, 0, 0),
+
+			acceleration: new THREE.Vector3(0, 1, 0),
+			accelerationSpread: new THREE.Vector3(3, 0, 3),
+
+			velocity: new THREE.Vector3(0, 10, 0),
+			velocitySpread: new THREE.Vector3(2, 2, 2),
+
+			colorStart: new THREE.Color('white'),
+			colorEnd: new THREE.Color('yellow'),
+
+			sizeStart: 1,
+			sizeEnd: 2,
+
+			particleCount: 1500
+		});
+
+		this.particleGroup.addEmitter(emitter);
+	}
+
+	this.init_particle_system();
 	this.init_scene();
 	this.init_score3d();
 	this.create_note_geometries(globals.song.notes);
