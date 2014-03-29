@@ -228,8 +228,8 @@ function Graphics(game) {
 }
 
 Graphics.prototype = {
-	NOTE_MATERIAL_NOT_PRESSED: new THREE.MeshPhongMaterial({color: 0xffff11, specular: 0xffff11, shininess: 10}),
-	NOTE_MATERIAL_PRESSED: new THREE.MeshPhongMaterial({color: 0xffff11, specular: 0xffffff, emissive: 0x999999, shininess: 100}),
+	NOTE_MATERIAL_NOT_PRESSED: new THREE.MeshPhongMaterial({color: 0xffff11, specular: 0xffff11, shininess: 10, wrapAround: true, wrapRGB: new THREE.Vector3(1, 0 ,0)}),
+	NOTE_MATERIAL_PRESSED: new THREE.MeshPhongMaterial({color: 0xffff11, specular: 0xffffff, emissive: 0x999999, shininess: 100, wrapAround: true, wrapRGB: new THREE.Vector3(1, 1 ,1)}),
 	NECK_SCALE: new THREE.Matrix4(5, 0, 0, 0,
 								0, 5, 0, 0,
 								0, 0, 5, 0,

@@ -73,6 +73,8 @@ function load_note_head_geometry(geometry) {
 }
 
 function load_guitar_geometry(geometry, materials) {
+	geometry.mergeVertices();
+	geometry.computeVertexNormals();
 	globals.geometries.guitar_geometry = geometry;
 	globals.materials.guitar_material = new THREE.MeshFaceMaterial( materials );
 }
