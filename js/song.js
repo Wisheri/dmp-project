@@ -9,7 +9,7 @@ Song.prototype = {
 	parseNotes: function(noteStr) {
 		var lines = noteStr.split("\n");
 		var tempo = parseInt(lines[0]);
-		var standardLen = parseFloat(lines[1]) * 1000 * (tempo/60);
+		var standardLen = parseFloat(lines[1]) * 1000 * (60 / tempo);
 
 		var startIndex = lines[0].length + lines[1].length + 1;	
 		var isInsideParentheses = false;

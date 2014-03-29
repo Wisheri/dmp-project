@@ -22,7 +22,7 @@ function Game(song) {
 
 Game.prototype = {
 	NOTE_SPEED: 0.004, // 0.004 units/ms
-	NOTE_ACCURACY: 300, // 300ms accuracy required for the player to hit the notes	
+	NOTE_ACCURACY: 50, // 300ms accuracy required for the player to hit the notes	
 
 	show_note: function(note) {
 		var timeDiff = note.start - this.timeFromStart();
@@ -74,10 +74,10 @@ Game.prototype = {
 	updateScores: function(timeFromStart) {
 		for (var i = 0; i < this.pressedNotes.length; i++) {
 			if (this.pressedNotes[i].isPressed) {
-				var afterEnd = Math.max(0, timeFromStart - this.pressedNotes[i].end);
-				//var fromStartToLastUpdate = Math.max(0, this.lastUpdateTime - this.pressedNotes[i].start);
+				var afterEnd = Math.max(0, timeFromStart - Math.round(this.pressedNotes[i].end));
 				var afterLastUpdate = Math.max(0, timeFromStart - this.lastUpdateTime);
-				var beforeStart = Math.max(0, Math.min(this.pressedNotes[i].start - this.lastUpdateTime, afterLastUpdate));
+				var beforeStart = Math.max(0, Math.min(Math.round(this.pressedNotes[i].start)
+					 - this.lastUpdateTime, afterLastUpdate));
 				this.score += afterLastUpdate - afterEnd - beforeStart;
 			}
 		}
