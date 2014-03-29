@@ -20,9 +20,6 @@ Song.prototype = {
 			if (currentChar == '(') {
 				isInsideParentheses = true;
 			}
-			else if (currentChar == ')') {
-				isInsideParentheses = false;
-			}
 			else if (['A', 'B', 'C', 'D', 'E'].indexOf(currentChar) >= 0) {
 				note = new Note(globals.labels[currentChar], currentTime, currentTime + standardLen * currentCoefficient);
 				this.notes.push(note);
@@ -30,11 +27,24 @@ Song.prototype = {
 			else if (['0', '1', '2', '2', '4', '5', '6', '7', '8', '9'].indexOf(currentChar) >= 0) {
 				currentCoefficient = parseInt(currentChar);
 			}
+
+			if (noteStr.charAt(i+1) == ')'){
+				isInsideParentheses = false;
+			}
+
 			// We don't want to do this when inside parentheses to allow simultaneous notes
+			/*
 			if (!isInsideParentheses && currentChar != '\n' && currentChar != ' ') {
 				currentTime += standardLen * currentCoefficient;
 			}
-			currentCoefficient = 1;
+			*/
+
+			if (currentChar == '_' || ['A', 'B', 'C', 'D', 'E'].indexOf(currentChar) >= 0){
+				if (!isInsideParentheses) {
+					currentTime += standardLen * currentCoefficient;
+					currentCoefficient = 1;
+				}
+			}
 			
 		}
 		
