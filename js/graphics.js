@@ -151,7 +151,7 @@ function Graphics(game) {
 	function render_game(delta, renderer) { 
 		var deltaMs = delta * 1000;
 		var game = this.objects.game;
-
+		//var deltaMs = game.timeFromStart() - game.lastUpdateTime;
 		// Rotate light
 		this.objects.light.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), delta);		
 

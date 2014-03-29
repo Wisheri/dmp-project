@@ -25,7 +25,13 @@ Song.prototype = {
 				this.notes.push(note);
 			}
 			else if (['0', '1', '2', '2', '4', '5', '6', '7', '8', '9'].indexOf(currentChar) >= 0) {
-				currentCoefficient = parseInt(currentChar);
+				var prevchar = noteStr.charAt(i-1);
+				if (['0', '1', '2', '2', '4', '5', '6', '7', '8', '9'].indexOf(prevchar) >= 0) {
+					currentCoefficient = (parseInt(prevchar) * 10) + parseInt(currentChar);
+				}
+				else {
+					currentCoefficient = parseInt(currentChar);
+				}
 			}
 
 			if (noteStr.charAt(i+1) == ')'){

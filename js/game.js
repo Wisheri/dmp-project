@@ -72,7 +72,6 @@ Game.prototype = {
 	},
 
 	updateScores: function(timeFromStart) {
-		/*
 		for (var i = 0; i < this.pressedNotes.length; i++) {
 			if (this.pressedNotes[i].isPressed) {
 				var afterEnd = Math.max(0, timeFromStart - Math.round(this.pressedNotes[i].end));
@@ -83,6 +82,6 @@ Game.prototype = {
 			}
 		}
 		this.graphics.setScores(this.score);
-		*/
+		
 	}
 }
