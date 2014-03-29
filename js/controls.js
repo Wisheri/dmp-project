@@ -8,8 +8,7 @@ Controls.prototype = {
 	
 	keyPressed: function(label) {
 		var closestNote = globals.song.getClosestNote(label);
-		var timeDiff = Math.abs(globals.game.timeFromStart() - closestNote.start);
-		if (timeDiff < globals.game.NOTE_ACCURACY) {
+		if (closestNote != false) {
 			if (globals.game.pressedNotes[label].isPressed) {
 				globals.game.stopNote(label);
 			}

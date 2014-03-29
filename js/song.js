@@ -53,22 +53,25 @@ Song.prototype = {
 	
 	getClosestNote: function(label) {
 		var minTimeDiff = Number.MAX_VALUE;
+		var noteFound = false;
 		var currentClosest;
 		for (var i = 0; i < this.notes.length; i++) {
 			var timeDiff = Math.abs(globals.game.timeFromStart() - this.notes[i].start);
-			if (this.notes[i].label == label && timeDiff < minTimeDiff) {
+			if (this.notes[i].label == label && timeDiff < minTimeDiff && timeDiff < globals.game.NOTE_ACCURACY) {
 				minTimeDiff = timeDiff;
 				currentClosest = this.notes[i];
+				noteFound = true;
 			}
 		}
-		return currentClosest;
+		if (noteFound) return currentClosest;
+		else return false;
 	}
 }
 
 function Note(label, start, end) {
 	this.label = label;
-	this.start = start;
-	this.end = end;
+	this.start = Math.round(start);
+	this.end = Math.round(end);
 	this.length = end-start;
 	this.isShown = false;	
 	this.isPressed = false;
