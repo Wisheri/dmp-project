@@ -38,10 +38,11 @@ function startGame(song) {
 
 function animate() {
 	requestAnimationFrame(animate);
+	globals.renderManager.renderCurrent();
 	if (globals.started) {
 		globals.game.update();
 	}
-	globals.renderManager.renderCurrent();
+
 }
 
 globals.are_geometries_ready = function() {
