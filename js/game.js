@@ -21,7 +21,7 @@ function Game(song) {
 }
 
 Game.prototype = {
-	NOTE_SPEED: 0.002, // 0.002 units/ms
+	NOTE_SPEED: 0.004, // 0.004 units/ms
 	NOTE_ACCURACY: 300, // 300ms accuracy required for the player to hit the notes	
 
 	show_note: function(note) {

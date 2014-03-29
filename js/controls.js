@@ -26,7 +26,7 @@ Controls.prototype = {
 function menukeydown(keyCode){
 	if (keyCode == 13 /*ENTER*/ && globals.are_geometries_ready()) {
 		var song_request = new XMLHttpRequest();
-		song_request.open("get", "files/abc1.txt", false);
+		song_request.open("get", "files/abc2.txt", false);
 		song_request.send(null);
 
 		if (song_request.status == 200){
