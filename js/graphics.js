@@ -95,14 +95,14 @@ function Graphics(game) {
 		/* ------------ */
 		/*  Background  */
 		/* ------------ */
-
+		/*
 		var background_geometry = new THREE.CubeGeometry(150,150,0);
 		var background_material = new THREE.MeshBasicMaterial({map: globals.textures['background']});
 
 		this.background = new THREE.Mesh(background_geometry, background_material);
 		this.background.translateOnAxis(new THREE.Vector3(0, 0, 1), -60);
 		this.scene.add(this.background);	
-
+		*/
 		/* ----------- */
 		/*    Light    */
 		/* ----------- */
@@ -115,11 +115,37 @@ function Graphics(game) {
 		this.scene.add(this.light);
 		//var ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light useful for debugging
 		//this.scene.add( ambientLight );
+
+		/* ------------ */
+		/*  Background  */
+		/* ------------ */
+
+		this.backgroundMesh = new THREE.Mesh(
+			new THREE.PlaneGeometry(2,2,0),
+			new THREE.MeshBasicMaterial({
+				map: globals.textures['background']
+			}));
+
+		this.backgroundMesh.material.depthTest = false;
+		this.backgroundMesh.material.depthWrite = false;
+
+		this.backgroundScene = new THREE.Scene();
+		this.backgroundCamera = new THREE.Camera();
+
+		this.backgroundScene.add(this.backgroundCamera);
+		this.backgroundScene.add(this.backgroundMesh);
+
+		/*
+		*	Adding the scene to renderManager
+		*/
 		
 		this.camera.lookAt(new THREE.Vector3(0, 0, -1));
 		this.camera.position.z = 5;
 		globals.renderManager.add('game', this.scene, this.camera, render_game, 
-				{game: this.game, notes: this.notes, neckDir: this.neckDir, light: this.light});
+				{game: this.game, notes: this.notes, neckDir: this.neckDir, light: this.light, backgroundScene: this.backgroundScene, backgroundCamera: this.backgroundCamera});
+
+
+
 	}
 
 	function render_game(delta, renderer) { 
@@ -138,6 +164,9 @@ function Graphics(game) {
 			vecDelta.multiplyScalar(-game.NOTE_SPEED*deltaMs);
 			note.head_mesh.position.add(vecDelta);
 		}
+		renderer.autoClear = false;
+		renderer.clear();
+		renderer.render(this.objects.backgroundScene, this.objects.backgroundCamera);
 		renderer.render(this.scene, this.camera);
 
 		function getNotesToShow() {
