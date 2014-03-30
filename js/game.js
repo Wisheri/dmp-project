@@ -23,7 +23,7 @@ function Game(song) {
 
 Game.prototype = {
 	NOTE_SPEED: 0.004, // 0.004 units/ms
-	NOTE_ACCURACY: 50, // 300ms accuracy required for the player to hit the notes	
+	NOTE_ACCURACY: 150, // 300ms accuracy required for the player to hit the notes	
 
 	show_note: function(note) {
 		var timeDiff = note.start - this.timeFromStart();
@@ -82,7 +82,7 @@ Game.prototype = {
 				this.score += afterLastUpdate - afterEnd - beforeStart;
 			}
 		}
-		if (Math.floor(this.lastScore / 10) < Math.floor(this.score / 10)) {
+		if (Math.floor(this.lastScore / 150) < Math.floor(this.score / 150)) {
 			this.graphics.setScores(this.score);
 		}
 		this.lastScore = this.score;

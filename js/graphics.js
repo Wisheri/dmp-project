@@ -1,5 +1,7 @@
 function Graphics(game) {
 	this.game = game;
+	this.keyMeshes = new Array();
+	this.keyPositions = new Array();
 	this.LINE_POS = new Object();
 	this.particleGroup = new Object();
 	// Constants
@@ -34,6 +36,7 @@ function Graphics(game) {
 						0, 0, 0, 1);
 	var neckSide = new THREE.Vector3(1, 0, 0).normalize();
 	var neckUp = new THREE.Vector3(0, 1, -1).normalize();
+	this.neckUp = neckUp;
 	var neckCross = new THREE.Vector3();
 	neckCross.crossVectors( neckUp, neckSide );
 	var neckRotation = new THREE.Matrix4(neckSide.x, neckUp.x, neckCross.x, 0,
@@ -64,11 +67,26 @@ function Graphics(game) {
 
 		this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
 		
+		/* 
+		Keys
+		 */
+		 
+		for (var i = 0; i < 5; i++) {
+			var geometry = new THREE.TorusGeometry(0.35, 0.1, 20, 20);
+			var key = new THREE.Mesh( geometry, this.KEY_MATERIAL_NOT_PRESSED );
+			key.rotation = neckEuler;
+			key.position = NOTES_POS_0.clone();
+			key.position.add(NOTES_POS_DELTA.clone().multiplyScalar(i));
+			key.translateOnAxis(neckUp, this.KEY_HEIGHT);
+			this.keyMeshes.push(key);
+			this.scene.add( key );
+		}
+		 
 		/* ----------- */
 		/* Guitar neck */
 		/* ----------- */
 
-		var neck_geometry = new THREE.CubeGeometry(NECK_WIDTH,NECK_LENGTH,0);
+		//var neck_geometry = new THREE.CubeGeometry(NECK_WIDTH,NECK_LENGTH,0);
 		//var neck_material = new THREE.MeshPhongMaterial({color: 0x11ff11});
 		//var neck_material = new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture('../images/metalbox_full.png')});
 
@@ -94,7 +112,7 @@ function Graphics(game) {
 
 
 		this.line.position.copy(LINE_POS);
-		this.scene.add(this.line);
+		//this.scene.add(this.line);
 
 		/* ------------ */
 		/*  Background  */
@@ -294,6 +312,10 @@ Graphics.prototype = {
 								shininess: 10, wrapAround: true, wrapRGB: new THREE.Vector3(1, 0 ,0)}),
 	NOTE_MATERIAL_PRESSED: new THREE.MeshPhongMaterial({color: 0xffff11, specular: 0xffffff, emissive: 0x999999,
 								 shininess: 100, wrapAround: true, wrapRGB: new THREE.Vector3(1, 1 ,1)}),
+	KEY_MATERIAL_NOT_PRESSED: new THREE.MeshPhongMaterial({color: 0x11ffff, specular: 0x11ffff, emissive: 0x117777, 
+								shininess: 10, wrapAround: true, wrapRGB: new THREE.Vector3(1, 1 ,1)}),
+	KEY_MATERIAL_PRESSED: new THREE.MeshPhongMaterial({color: 0x11ffff, specular: 0x11ffff, emissive: 0x999999,
+								 shininess: 100, wrapAround: true, wrapRGB: new THREE.Vector3(1, 1 ,1)}),
 	NECK_SCALE: new THREE.Matrix4(5, 0, 0, 0,
 								0, 5, 0, 0,
 								0, 0, 5, 0,
@@ -302,6 +324,8 @@ Graphics.prototype = {
 								0, 1, 0, 0,
 								0, 0, 1, 0,
 								0, 0, 0, 0),
+	KEY_HEIGHT: 0.22,
+	KEY_HEIGHT_CHANGE: 0.12, // How much the height changes on keydown
 	
 	setScores: function(score) {
 		var text = score.toString(),

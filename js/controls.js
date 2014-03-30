@@ -38,35 +38,37 @@ function menukeydown(keyCode){
 	}
 }
 
-document.onkeydown = function(e) {
-	e = e || window.event;
-	e.preventDefault();
-	var keyCode = e.keyCode;
-	if (globals.started == false){
-		menukeydown(keyCode);
-	}
-	else if (keyCode == globals.controls.labelToKeyMap[0]) {
-		globals.controls.buttonsDown[0] = true;
-	}
-	else if (keyCode == globals.controls.labelToKeyMap[1]) {
-		globals.controls.buttonsDown[1] = true;
-	}
-	else if (keyCode == globals.controls.labelToKeyMap[2]) {
-		globals.controls.buttonsDown[2] = true;
-	}
-	else if (keyCode == globals.controls.labelToKeyMap[3]) {
-		globals.controls.buttonsDown[3] = true;
-	}
-	else if (keyCode == globals.controls.labelToKeyMap[4]) {
-		globals.controls.buttonsDown[4] = true;
-	}
-	else if (keyCode == 13) { //ENTER
+function gamekeydown(keyCode){
+	if (keyCode == 13) { //ENTER
 		for (var i = 0; i < globals.controls.buttonsDown.length; i++) {
 			var isDown = globals.controls.buttonsDown[i];
 			if (isDown) {
 				globals.controls.keyPressed(i);
 			}
 		}
+	} else {
+		for (var i = 0; i < 5; i++) {
+			if (globals.controls.labelToKeyMap[i] == keyCode) {
+				if (globals.controls.buttonsDown[i] == false) {
+					// Prevent continuous stroke
+					globals.controls.buttonsDown[i] = true;
+					var keyMesh = globals.game.graphics.keyMeshes[i];
+					keyMesh.material = globals.game.graphics.KEY_MATERIAL_PRESSED.clone();
+					keyMesh.translateOnAxis(globals.game.graphics.neckUp, -globals.game.graphics.KEY_HEIGHT_CHANGE);
+				}
+			}
+		}
+	}
+}
+
+document.onkeydown = function(e) {
+	e = e || window.event;
+	e.preventDefault();
+	var keyCode = e.keyCode;
+	if (globals.started == false){
+		menukeydown(keyCode);
+	} else {
+		gamekeydown(keyCode);
 	}
 	return false;
 }
@@ -75,25 +77,16 @@ document.onkeyup = function(e) {
 	e = e || window.event;
 	e.preventDefault();
 	var keyCode = e.keyCode;
-	if (keyCode == globals.controls.labelToKeyMap[0]) {
-		globals.controls.buttonsDown[0] = false;
-		globals.game.stopNote(0);
-	}
-	else if (keyCode == globals.controls.labelToKeyMap[1]) {
-		globals.controls.buttonsDown[1] = false;
-		globals.game.stopNote(1);
-	}
-	else if (keyCode == globals.controls.labelToKeyMap[2]) {
-		globals.controls.buttonsDown[2] = false;
-		globals.game.stopNote(2);
-	}
-	else if (keyCode == globals.controls.labelToKeyMap[3]) {
-		globals.controls.buttonsDown[3] = false;
-		globals.game.stopNote(3);
-	}
-	else if (keyCode == globals.controls.labelToKeyMap[4]) {
-		globals.controls.buttonsDown[4] = false;
-		globals.game.stopNote(4);
+	for (var i = 0; i < 5; i++) {
+		if (globals.controls.labelToKeyMap[i] == keyCode) {
+			if (globals.controls.buttonsDown[i]) {
+				globals.controls.buttonsDown[i] = false;
+				var keyMesh = globals.game.graphics.keyMeshes[i];
+				keyMesh.material = globals.game.graphics.KEY_MATERIAL_NOT_PRESSED.clone();
+				globals.game.stopNote(i);
+				keyMesh.translateOnAxis(globals.game.graphics.neckUp, globals.game.graphics.KEY_HEIGHT_CHANGE);
+			}
+		}
 	}
 	return false;
 }
