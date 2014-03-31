@@ -275,7 +275,7 @@ function Graphics(game) {
 	this.init_particle_system = function () {
 		this.particleGroup = new SPE.Group({
 			texture: THREE.ImageUtils.loadTexture('../files/testparticle2.png'),
-			maxAge: 2
+			maxAge: 0.3
 		});
 		
 		for (var i = 0; i < 5; i++) {
@@ -283,17 +283,17 @@ function Graphics(game) {
 				position: NOTES_POS_0.clone().add(NOTES_POS_DELTA.clone().multiplyScalar(i)),
 				positionSpread: new THREE.Vector3(0, 0, 0),
 
-				acceleration: new THREE.Vector3(0, 1, 0),
+				acceleration: new THREE.Vector3(0, 5, 0),
 				accelerationSpread: new THREE.Vector3(0, 0, 0),
 
-				velocity: new THREE.Vector3(0, 5, 0),
-				velocitySpread: new THREE.Vector3(1, 0, 1),
+				velocity: new THREE.Vector3(0, 15, 0),
+				velocitySpread: new THREE.Vector3(4, 0, 4),
 
 				colorStart: new THREE.Color('red'),
 				colorEnd: new THREE.Color('white'),
 
-				sizeStart: 1,
-				sizeEnd: 2,
+				sizeStart: 0.5,
+				sizeEnd: 3,
 
 				particleCount: 1500
 			});

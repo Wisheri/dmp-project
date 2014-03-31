@@ -1,6 +1,9 @@
 function Menu() {
 	this.scene = new THREE.Scene();
-	var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+	//var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+	var width = 150;
+	var height = 100;
+	var camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 1, 1000 );
 	camera.position.z = 70;
 	camera.position.x = 45;
 	camera.position.y = -20;
@@ -83,7 +86,7 @@ function Menu() {
 	this.help_text2.position.x = 25;
 	this.scene.add(this.help_text2);
 
-	var help_text3 = "Pres M to switch the keys to (1,2,3,4 and 5)",
+	var help_text3 = "Press M to switch the keys to (1,2,3,4 and 5)",
 
 					height = 1,
 					size = 3,
