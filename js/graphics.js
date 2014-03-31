@@ -28,8 +28,7 @@ function Graphics(game) {
 	notePoints.push( new THREE.Vector2 (   0.99,  0.05 ) );
 	notePoints.push( new THREE.Vector2 (   0.99,  0 ) );
 	notePath.splineThru(notePoints);
-	
-	//var noteShape = new THREE.Shape( notePoints );
+
 	var noteShape = notePath.toShapes(true)[0];
 	var noteTranslationX = new THREE.Matrix4(1, 0, 0, noteMiddle,
 						0, 1, 0, 0,
@@ -67,6 +66,8 @@ function Graphics(game) {
 		/* -------*/
 
 		this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+		this.camera.lookAt(new THREE.Vector3(0, 0, -1));
+		this.camera.position.z = 5;
 		
 		/* 
 		Keys
@@ -74,7 +75,7 @@ function Graphics(game) {
 		 
 		for (var i = 0; i < 5; i++) {
 			var geometry = new THREE.TorusGeometry(0.35, 0.1, 20, 40);
-			var key = new THREE.Mesh( geometry, this.KEY_MATERIAL_NOT_PRESSED );
+			var key = new THREE.Mesh( geometry, this.get_key_material(i, false) );
 			key.rotation = neckEuler;
 			key.position = NOTES_POS_0.clone();
 			key.position.add(NOTES_POS_DELTA.clone().multiplyScalar(i));
@@ -87,13 +88,7 @@ function Graphics(game) {
 		/* Guitar neck */
 		/* ----------- */
 
-		//var neck_geometry = new THREE.CubeGeometry(NECK_WIDTH,NECK_LENGTH,0);
-		//var neck_material = new THREE.MeshPhongMaterial({color: 0x11ff11});
-		//var neck_material = new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture('../images/metalbox_full.png')});
-
 		var neck_material = new THREE.MeshPhongMaterial({map: globals.textures['neck']});	
-
-		//this.neck = new THREE.Mesh(neck_geometry, neck_material);
 		this.neck = new THREE.Mesh(globals.geometries.guitar_geometry, globals.materials.guitar_material);
 		this.neck.geometry.applyMatrix(this.NECK_SCALE);
 		this.neck.geometry.applyMatrix(this.NECK_SCALE_X);
@@ -101,43 +96,19 @@ function Graphics(game) {
 		this.neck.rotateOnAxis(new THREE.Vector3(1, 0, 0), -Math.PI/2);
 		this.neck.translateOnAxis(new THREE.Vector3(0, 1, 0), -2.2);
 		this.neck.translateOnAxis(new THREE.Vector3(0, 0, 1), -7);
+		this.neck.translateOnAxis(new THREE.Vector3(1, 0, 0), 0.1);
 		this.scene.add(this.neck);
 
-		/* ----------- */
-		/*    Line     */
-		/* ----------- */
-
-		var line_geometry = new THREE.CubeGeometry(NECK_WIDTH, 0.5, 0.5);
-		var line_material = new THREE.MeshPhongMaterial({color: 0x0000ff});
-		this.line = new THREE.Mesh(line_geometry, line_material);
-
-
-		this.line.position.copy(LINE_POS);
-		//this.scene.add(this.line);
-
-		/* ------------ */
-		/*  Background  */
-		/* ------------ */
-		/*
-		var background_geometry = new THREE.CubeGeometry(150,150,0);
-		var background_material = new THREE.MeshBasicMaterial({map: globals.textures['background']});
-
-		this.background = new THREE.Mesh(background_geometry, background_material);
-		this.background.translateOnAxis(new THREE.Vector3(0, 0, 1), -60);
-		this.scene.add(this.background);	
-		*/
 		/* ----------- */
 		/*    Light    */
 		/* ----------- */
 
-		//this.light = new THREE.PointLight( 0xff0000, 10, 100);
-		//this.light.position.set(5,5,10);
-		this.light = new THREE.DirectionalLight(0xffffff, 0.5);
+		this.light = new THREE.DirectionalLight(0xffffff, 0.6);
 		this.light.position.set(0, 1, 0.5);
 
 		this.scene.add(this.light);
-		//var ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light useful for debugging
-		//this.scene.add( ambientLight );
+		var ambientLight = new THREE.AmbientLight( 0x202020 ); // soft white light
+		this.scene.add( ambientLight );
 
 		/* ------------ */
 		/*  Background  */
@@ -158,17 +129,6 @@ function Graphics(game) {
 		this.backgroundScene.add(this.backgroundCamera);
 		this.backgroundScene.add(this.backgroundMesh);
 
-		/*
-		*	Adding the scene to renderManager
-		*/
-		
-		this.camera.lookAt(new THREE.Vector3(0, 0, -1));
-		this.camera.position.z = 5;
-		globals.renderManager.add('game', this.scene, this.camera, render_game, 
-				{game: this.game, notes: this.notes, neckDir: this.neckDir, light: this.light, backgroundScene: this.backgroundScene, backgroundCamera: this.backgroundCamera, particleGroup: this.particleGroup});
-
-
-
 	}
 
 	function render_game(delta, renderer) { 
@@ -178,7 +138,6 @@ function Graphics(game) {
 		// Rotate light
 		this.objects.light.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), delta);		
 
-		getNotesToShow(this.objects);
 		for (var i = 0; i < this.objects.notes.length; i += 1) {
 			var dir = this.objects.neckDir;
 			var note = this.objects.notes[i];
@@ -187,25 +146,14 @@ function Graphics(game) {
 			vecDelta.multiplyScalar(-game.NOTE_SPEED*deltaMs);
 			note.head_mesh.position.add(vecDelta);
 		}
+		
+		globals.game.graphics.stopEmitters(globals.game.timeFromStart());
+		
 		renderer.autoClear = false;
 		renderer.clear();
 		renderer.render(this.objects.backgroundScene, this.objects.backgroundCamera);
 		renderer.render(this.scene, this.camera);
-		function getNotesToShow(objects) {
-			var i = game.song.notes.lastShownIndex + 1;
-			while (i < game.song.notes.length) {
-				var note = game.song.notes[i];
-				var timeToNote = note.start - game.timeFromStart();
-				if (timeToNote > game.timeToShow) break;
-				i++;
-			}
-			// Push all the notes to be shown to the renderer's list and show them
-			for (var j = game.song.notes.lastShownIndex + 1; j < i; j++) {
-				note = game.song.notes[j];
-				game.show_note(note);
-			}
-			game.song.notes.lastShownIndex = i-1;
-		}
+		renderer.render(this.objects.scoreScene, this.objects.scoreCamera);
 	}
 
 	this.create_note_geometries = function(notes) {
@@ -227,7 +175,7 @@ function Graphics(game) {
 		};
 		var noteGeometry = new THREE.ExtrudeGeometry( noteShape, options );
 		noteGeometry.applyMatrix(noteTranslationX);
-		var noteMesh = new THREE.Mesh( noteGeometry, this.NOTE_MATERIAL_NOT_PRESSED.clone() );
+		var noteMesh = new THREE.Mesh( noteGeometry, this.get_note_material(note.label, false) );
 		var n = note.label;
 		note.mesh = noteMesh;
 		note.mesh.position.copy(NOTES_POS_DELTA);
@@ -235,7 +183,7 @@ function Graphics(game) {
 		note.mesh.position.add(NOTES_POS_0);
 		
 		// Create the head mesh
-		note.head_mesh = new THREE.Mesh( globals.geometries.note_head_geometry, this.NOTE_MATERIAL_NOT_PRESSED.clone() );
+		note.head_mesh = new THREE.Mesh( globals.geometries.note_head_geometry, this.get_note_material(note.label, false) );
 		note.head_mesh.rotation = neckEuler.clone();
 		note.head_mesh.rotateOnAxis(new THREE.Vector3(1, 0, 0), -Math.PI/2);
 		note.head_mesh.position.copy(NOTES_POS_DELTA);
@@ -244,32 +192,14 @@ function Graphics(game) {
 	}
 
 	this.init_score3d = function() {		
-		var text = "0",
-
-				height = 0.1,
-				size = 0.5,
-				hover = 1,
-
-				curveSegments = 2,
-
-				bevelThickness = 0.01,
-				bevelSize = 0.01,
-				bevelSegments = 2,
-				bevelEnabled = true;
-
-		var text_geometry = new THREE.TextGeometry( text, {
-			size: size,
-			height: height,
-			curveSegments: curveSegments,
-			bevelThickness: bevelThickness,
-			bevelSize: bevelSize,
-			bevelEnabled: bevelEnabled, 
-		});
-
-		var text_material = new THREE.MeshPhongMaterial({color: 0x11ff11});
-		this.score3d = new THREE.Mesh(text_geometry, text_material);
-		this.score3d.position = new THREE.Vector3(-6, 2.5, 0);
-		this.scene.add(this.score3d);
+		this.create_score_mesh("0");
+		
+		this.scoreScene = new THREE.Scene();
+		this.scoreCamera = new THREE.Camera();
+		this.scoreScene.add(this.scoreCamera);
+		this.scoreScene.add(this.score3d);
+		var light = new THREE.AmbientLight( 0xffffff );
+		this.scoreScene.add( light );
 	}
 
 	this.init_particle_system = function () {
@@ -286,8 +216,8 @@ function Graphics(game) {
 				acceleration: new THREE.Vector3(0, 5, 0),
 				accelerationSpread: new THREE.Vector3(0, 0, 0),
 
-				velocity: new THREE.Vector3(0, 15, 0),
-				velocitySpread: new THREE.Vector3(4, 0, 4),
+				velocity: new THREE.Vector3(0, 18, 0),
+				velocitySpread: new THREE.Vector3(2.5, 0, 2.5),
 
 				colorStart: new THREE.Color('red'),
 				colorEnd: new THREE.Color('white'),
@@ -307,6 +237,10 @@ function Graphics(game) {
 	this.init_scene();
 	this.init_score3d();
 	this.create_note_geometries(globals.song.notes);
+	globals.renderManager.add('game', this.scene, this.camera, render_game, 
+				{game: this.game, notes: this.notes, neckDir: this.neckDir, light: this.light, backgroundScene: this.backgroundScene, 
+				backgroundCamera: this.backgroundCamera, scoreCamera: this.scoreCamera, scoreScene: this.scoreScene,
+				particleGroup: this.particleGroup});
 	globals.renderManager.setCurrent('game');
 }
 
@@ -337,35 +271,65 @@ Graphics.prototype = {
 	
 	FLAME_EMITTER_AGE: 100, // How many milliseconds the flames will emit
 	
+	LABEL_TO_COLOR_MAP: [new THREE.Color(0x0000ff) /*blue*/, new THREE.Color(0x00ff00) /*green*/, new THREE.Color(0xff0000) /*red*/,
+						new THREE.Color(0xffff00) /*yellow*/, new THREE.Color(0xff6600) /*orange*/],
+	
+	get_note_material: function(label, pressed) {
+		var material = new Object();
+		if (!pressed) {
+			material = this.NOTE_MATERIAL_NOT_PRESSED.clone();
+			material.color = this.LABEL_TO_COLOR_MAP[label];
+			material.specular = this.LABEL_TO_COLOR_MAP[label];
+		} else {
+			material = this.NOTE_MATERIAL_PRESSED.clone();
+			material.color = this.LABEL_TO_COLOR_MAP[label];
+		}
+		return material.clone();
+	},
+	
+	get_key_material: function(label, pressed) {
+		var material = new Object();
+		if (!pressed) {
+			material = this.KEY_MATERIAL_NOT_PRESSED.clone();
+			material.color = this.LABEL_TO_COLOR_MAP[label];
+			material.specular = this.LABEL_TO_COLOR_MAP[label];
+		} else {
+			material = this.KEY_MATERIAL_PRESSED.clone();
+			material.color = this.LABEL_TO_COLOR_MAP[label];
+			material.specular = this.LABEL_TO_COLOR_MAP[label];
+		}
+		return material.clone();
+	},
+	
 	setScores: function(score) {
-		var text = score.toString(),
+		var text = score.toString();
+		this.scoreScene.remove(this.score3d);
+		this.create_score_mesh(text);
+		this.scoreScene.add(this.score3d);
 
-				height = 0.1,
-				size = 0.5,
-				hover = 1,
-
-				curveSegments = 2,
-
-				bevelThickness = 0.01,
-				bevelSize = 0.01,
-				bevelSegments = 2,
-				bevelEnabled = true;
-
-		var text_geometry = new THREE.TextGeometry( text, {
-			size: size,
-			height: height,
-			curveSegments: curveSegments,
-			bevelThickness: bevelThickness,
-			bevelSize: bevelSize,
-			bevelEnabled: bevelEnabled, 
+	},
+	
+	create_score_mesh: function(scoreStr) {
+		var text_geometry = new THREE.TextGeometry( scoreStr, {
+			size: 0.1,
+			height: 0.1,
+			curveSegments: 0,
+			bevelEnabled: false, 
 		});
-
-		this.scene.remove(this.score3d);
-
-		var text_material = new THREE.MeshPhongMaterial({color: 0x11ff11});
+		var text_material = new THREE.MeshPhongMaterial({ambient: 0xff1111});
 		this.score3d = new THREE.Mesh(text_geometry, text_material);
-		this.score3d.position = new THREE.Vector3(-6, 2.5, 0);
-		this.scene.add(this.score3d);
-
+		this.score3d.material.depthTest = false;
+		this.score3d.material.depthWrite = false;
+		this.score3d.position = new THREE.Vector3(-0.7, 0.7, 0);
+	},
+	
+	stopEmitters: function(timeFromStart) {
+		for (var i = 0; i < 5; i++) {
+			var t = this.emitterStartTimes[i];
+			var diff = timeFromStart - t;
+			if (diff > this.FLAME_EMITTER_AGE) {
+				this.particleGroup.emitters[i].disable();
+			}
+		}
 	}
 }

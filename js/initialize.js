@@ -6,6 +6,8 @@ globals.labels['C'] = 2;
 globals.labels['D'] = 3;
 globals.labels['E'] = 4;
 
+globals.frameCount = 0;
+
 globals.controls = new Controls();
 
 globals.geometries = new Object();
@@ -39,9 +41,14 @@ function startGame(song) {
 function animate() {
 	requestAnimationFrame(animate);
 	globals.renderManager.renderCurrent();
+	
 	if (globals.started) {
-		globals.game.update();
+		var gameTimeDiff = globals.game.timeFromStart() - globals.game.lastUpdateTime;
+		if (gameTimeDiff > 200) {
+			globals.game.update();
+		}
 	}
+	globals.frameCount++;
 
 }
 

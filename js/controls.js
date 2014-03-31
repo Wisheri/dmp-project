@@ -14,8 +14,8 @@ Controls.prototype = {
 				globals.game.stopNote(label);
 			}
 			globals.game.pressedNotes[label] = closestNote;
-			closestNote.mesh.material = globals.game.graphics.NOTE_MATERIAL_PRESSED.clone();
-			closestNote.head_mesh.material = globals.game.graphics.NOTE_MATERIAL_PRESSED.clone();
+			closestNote.mesh.material = globals.game.graphics.get_note_material(label, true);
+			closestNote.head_mesh.material = globals.game.graphics.get_note_material(label, true);;
 			closestNote.isPressed = true;
 			globals.game.graphics.particleGroup.emitters[label].enable();
 			globals.game.graphics.emitterStartTimes[label] = globals.game.timeFromStart();
@@ -56,7 +56,7 @@ function gamekeydown(keyCode){
 					// Prevent continuous stroke
 					globals.controls.buttonsDown[i] = true;
 					var keyMesh = globals.game.graphics.keyMeshes[i];
-					keyMesh.material = globals.game.graphics.KEY_MATERIAL_PRESSED.clone();
+					keyMesh.material = globals.game.graphics.get_key_material(i, true);
 					keyMesh.translateOnAxis(globals.game.graphics.neckUp, -globals.game.graphics.KEY_HEIGHT_CHANGE);
 				}
 			}
@@ -87,7 +87,7 @@ document.onkeyup = function(e) {
 			if (globals.controls.buttonsDown[i]) {
 				globals.controls.buttonsDown[i] = false;
 				var keyMesh = globals.game.graphics.keyMeshes[i];
-				keyMesh.material = globals.game.graphics.KEY_MATERIAL_NOT_PRESSED.clone();
+				keyMesh.material = globals.game.graphics.get_key_material(i, false);
 				globals.game.stopNote(i);
 				keyMesh.translateOnAxis(globals.game.graphics.neckUp, globals.game.graphics.KEY_HEIGHT_CHANGE);
 				globals.game.graphics.particleGroup.emitters[i].disable();

@@ -15,7 +15,7 @@ function Game(song) {
 	var nextNote = 0;
 	//this.graphics.init_scene();
 	this.song.notes.lastShownIndex = -1;
-	this.lastUpdateTime = new Object();
+	this.lastUpdateTime = 0;
 	this.lastScore = 0;
 
 
@@ -51,16 +51,16 @@ Game.prototype = {
 	stopNote: function(label) {
 		if (this.pressedNotes[label].isPressed) {
 			this.pressedNotes[label].isPressed = false;
-			this.pressedNotes[label].mesh.material = globals.game.graphics.NOTE_MATERIAL_NOT_PRESSED.clone();
-			this.pressedNotes[label].head_mesh.material = globals.game.graphics.NOTE_MATERIAL_NOT_PRESSED.clone();
+			this.pressedNotes[label].mesh.material = globals.game.graphics.get_note_material(label, false);
+			this.pressedNotes[label].head_mesh.material = globals.game.graphics.get_note_material(label, false);
 		}
 	},
 	
 	update: function() {
 		var timeFromStart = this.timeFromStart();
+		this.getNotesToShow();
 		this.updateScores(timeFromStart);
 		this.stopNotes(timeFromStart);
-		this.stopEmitters(timeFromStart);
 		this.lastUpdateTime = timeFromStart;
 	},
 
@@ -83,19 +83,26 @@ Game.prototype = {
 				this.score += afterLastUpdate - afterEnd - beforeStart;
 			}
 		}
-		if (Math.floor(this.lastScore / 150) < Math.floor(this.score / 150)) {
+		//if (Math.floor(this.lastScore / 20) < Math.floor(this.score / 20)) {
 			this.graphics.setScores(this.score);
-		}
+		//}
 		this.lastScore = this.score;
 	},
 	
-	stopEmitters: function(timeFromStart) {
-		for (var i = 0; i < 5; i++) {
-			var t = this.graphics.emitterStartTimes[i];
-			var diff = timeFromStart - t;
-			if (diff > this.graphics.FLAME_EMITTER_AGE) {
-				this.graphics.particleGroup.emitters[i].disable();
+	getNotesToShow: function() {
+			var i = this.song.notes.lastShownIndex + 1;
+			var bufferTime = 300;
+			while (i < this.song.notes.length) {
+				var note = this.song.notes[i];
+				var timeToNote = note.start - this.timeFromStart();
+				if (timeToNote > this.timeToShow - bufferTime) break;
+				i++;
 			}
+			// Push all the notes to be shown to the renderer's list and show them
+			for (var j = this.song.notes.lastShownIndex + 1; j < i; j++) {
+				var note = this.song.notes[j];
+				this.show_note(note);
+			}
+			this.song.notes.lastShownIndex = i-1;
 		}
-	}
 }
