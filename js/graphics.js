@@ -1,6 +1,7 @@
 function Graphics(game) {
 	this.game = game;
 	this.keyMeshes = new Array();
+	this.emitterStartTimes = [0, 0, 0, 0, 0];
 	this.keyPositions = new Array();
 	this.LINE_POS = new Object();
 	this.particleGroup = new Object();
@@ -72,7 +73,7 @@ function Graphics(game) {
 		 */
 		 
 		for (var i = 0; i < 5; i++) {
-			var geometry = new THREE.TorusGeometry(0.35, 0.1, 20, 20);
+			var geometry = new THREE.TorusGeometry(0.35, 0.1, 20, 40);
 			var key = new THREE.Mesh( geometry, this.KEY_MATERIAL_NOT_PRESSED );
 			key.rotation = neckEuler;
 			key.position = NOTES_POS_0.clone();
@@ -201,7 +202,6 @@ function Graphics(game) {
 			// Push all the notes to be shown to the renderer's list and show them
 			for (var j = game.song.notes.lastShownIndex + 1; j < i; j++) {
 				note = game.song.notes[j];
-				objects.particleGroup.emitters[0].disable();
 				game.show_note(note);
 			}
 			game.song.notes.lastShownIndex = i-1;
@@ -274,30 +274,33 @@ function Graphics(game) {
 
 	this.init_particle_system = function () {
 		this.particleGroup = new SPE.Group({
-			texture: THREE.ImageUtils.loadTexture('../files/testparticle.png'),
-			maxAge: 3
+			texture: THREE.ImageUtils.loadTexture('../files/testparticle2.png'),
+			maxAge: 2
 		});
+		
+		for (var i = 0; i < 5; i++) {
+			var emitter = new SPE.Emitter({
+				position: NOTES_POS_0.clone().add(NOTES_POS_DELTA.clone().multiplyScalar(i)),
+				positionSpread: new THREE.Vector3(0, 0, 0),
 
-		var emitter = new SPE.Emitter({
-			position: this.LINE_POS,
-			positionSpread: new THREE.Vector3(0, 0, 0),
+				acceleration: new THREE.Vector3(0, 1, 0),
+				accelerationSpread: new THREE.Vector3(0, 0, 0),
 
-			acceleration: new THREE.Vector3(0, 1, 0),
-			accelerationSpread: new THREE.Vector3(3, 0, 3),
+				velocity: new THREE.Vector3(0, 5, 0),
+				velocitySpread: new THREE.Vector3(1, 0, 1),
 
-			velocity: new THREE.Vector3(0, 10, 0),
-			velocitySpread: new THREE.Vector3(2, 2, 2),
+				colorStart: new THREE.Color('red'),
+				colorEnd: new THREE.Color('white'),
 
-			colorStart: new THREE.Color('white'),
-			colorEnd: new THREE.Color('yellow'),
+				sizeStart: 1,
+				sizeEnd: 2,
 
-			sizeStart: 1,
-			sizeEnd: 2,
+				particleCount: 1500
+			});
 
-			particleCount: 1500
-		});
-
-		this.particleGroup.addEmitter(emitter);
+			this.particleGroup.addEmitter(emitter);
+			emitter.disable(); // Emitters initially disabled, of course
+		}
 	}
 
 	this.init_particle_system();
@@ -310,12 +313,17 @@ function Graphics(game) {
 Graphics.prototype = {
 	NOTE_MATERIAL_NOT_PRESSED: new THREE.MeshPhongMaterial({color: 0xffff11, specular: 0xffff11, 
 								shininess: 10, wrapAround: true, wrapRGB: new THREE.Vector3(1, 0 ,0)}),
+								
 	NOTE_MATERIAL_PRESSED: new THREE.MeshPhongMaterial({color: 0xffff11, specular: 0xffffff, emissive: 0x999999,
 								 shininess: 100, wrapAround: true, wrapRGB: new THREE.Vector3(1, 1 ,1)}),
+								 
 	KEY_MATERIAL_NOT_PRESSED: new THREE.MeshPhongMaterial({color: 0x11ffff, specular: 0x11ffff, emissive: 0x117777, 
-								shininess: 10, wrapAround: true, wrapRGB: new THREE.Vector3(1, 1 ,1)}),
+								shininess: 10, wrapAround: true, wrapRGB: new THREE.Vector3(1, 1 ,1),
+								transparent: true, opacity: 0.5}),
+								
 	KEY_MATERIAL_PRESSED: new THREE.MeshPhongMaterial({color: 0x11ffff, specular: 0x11ffff, emissive: 0x999999,
 								 shininess: 100, wrapAround: true, wrapRGB: new THREE.Vector3(1, 1 ,1)}),
+								 
 	NECK_SCALE: new THREE.Matrix4(5, 0, 0, 0,
 								0, 5, 0, 0,
 								0, 0, 5, 0,
@@ -326,6 +334,8 @@ Graphics.prototype = {
 								0, 0, 0, 0),
 	KEY_HEIGHT: 0.22,
 	KEY_HEIGHT_CHANGE: 0.12, // How much the height changes on keydown
+	
+	FLAME_EMITTER_AGE: 100, // How many milliseconds the flames will emit
 	
 	setScores: function(score) {
 		var text = score.toString(),

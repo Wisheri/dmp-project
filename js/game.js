@@ -60,6 +60,7 @@ Game.prototype = {
 		var timeFromStart = this.timeFromStart();
 		this.updateScores(timeFromStart);
 		this.stopNotes(timeFromStart);
+		this.stopEmitters(timeFromStart);
 		this.lastUpdateTime = timeFromStart;
 	},
 
@@ -86,5 +87,15 @@ Game.prototype = {
 			this.graphics.setScores(this.score);
 		}
 		this.lastScore = this.score;
+	},
+	
+	stopEmitters: function(timeFromStart) {
+		for (var i = 0; i < 5; i++) {
+			var t = this.graphics.emitterStartTimes[i];
+			var diff = timeFromStart - t;
+			if (diff > this.graphics.FLAME_EMITTER_AGE) {
+				this.graphics.particleGroup.emitters[i].disable();
+			}
+		}
 	}
 }

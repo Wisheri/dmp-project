@@ -3,19 +3,22 @@ function Controls() {
 }
 
 Controls.prototype = {
-	//labelToKeyMap: [112, 112, 114, 115, 116],
-	labelToKeyMap: [49, 50, 51, 52, 53],
+	labelToKeyMap: [112, 113, 114, 115, 116],
+	//labelToKeyMap: [49, 50, 51, 52, 53],
 	
 	keyPressed: function(label) {
 		var closestNote = globals.song.getClosestNote(label);
 		if (closestNote != false) {
 			if (globals.game.pressedNotes[label].isPressed) {
+				globals.game.graphics.particleGroup.emitters[label].disable();
 				globals.game.stopNote(label);
 			}
 			globals.game.pressedNotes[label] = closestNote;
 			closestNote.mesh.material = globals.game.graphics.NOTE_MATERIAL_PRESSED.clone();
 			closestNote.head_mesh.material = globals.game.graphics.NOTE_MATERIAL_PRESSED.clone();
 			closestNote.isPressed = true;
+			globals.game.graphics.particleGroup.emitters[label].enable();
+			globals.game.graphics.emitterStartTimes[label] = globals.game.timeFromStart();
 		}
 	}
 
@@ -65,7 +68,9 @@ document.onkeydown = function(e) {
 	e = e || window.event;
 	e.preventDefault();
 	var keyCode = e.keyCode;
-	if (globals.started == false){
+	// Press m to use number keys instead of F-keys
+	if (keyCode == 77) globals.controls.labelToKeyMap = [49, 50, 51, 52, 53];
+	else if (globals.started == false){
 		menukeydown(keyCode);
 	} else {
 		gamekeydown(keyCode);
@@ -85,6 +90,7 @@ document.onkeyup = function(e) {
 				keyMesh.material = globals.game.graphics.KEY_MATERIAL_NOT_PRESSED.clone();
 				globals.game.stopNote(i);
 				keyMesh.translateOnAxis(globals.game.graphics.neckUp, globals.game.graphics.KEY_HEIGHT_CHANGE);
+				globals.game.graphics.particleGroup.emitters[i].disable();
 			}
 		}
 	}
