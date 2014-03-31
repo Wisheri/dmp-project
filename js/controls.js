@@ -19,6 +19,10 @@ Controls.prototype = {
 			closestNote.isPressed = true;
 			globals.game.graphics.particleGroup.emitters[label].enable();
 			globals.game.graphics.emitterStartTimes[label] = globals.game.timeFromStart();
+			globals.game.score += 500;
+		} else {
+			// Punish for missing
+			globals.game.score -= 1000;
 		}
 	}
 

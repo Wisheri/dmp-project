@@ -14,7 +14,6 @@ function Game(song) {
 	}
 	var nextNote = 0;
 	//this.graphics.init_scene();
-	this.song.notes.lastShownIndex = -1;
 	this.lastUpdateTime = 0;
 	this.lastScore = 0;
 
@@ -27,16 +26,48 @@ Game.prototype = {
 
 	show_note: function(note) {
 		var timeDiff = note.start - this.timeFromStart();
-		note.mesh.translateOnAxis(this.graphics.neckDir, timeDiff * this.NOTE_SPEED);
+		//note.mesh.translateOnAxis(this.graphics.neckDir, timeDiff * this.NOTE_SPEED);
 		
 		var vecDelta = this.graphics.neckDir.clone();
 		vecDelta.multiplyScalar(timeDiff * this.NOTE_SPEED);
 		note.head_mesh.position.add(vecDelta);
+		note.mesh.position.add(vecDelta);
 
 		this.graphics.scene.add(note.mesh);
 		this.graphics.scene.add(note.head_mesh);
 		this.graphics.notes.push(note);
-	},	
+	},
+	
+	set_note_positions: function(timeFromStart) {
+		for (var i = this.song.notes.lastShownIndex; i > this.song.notes.lastDisappearedIndex; i--) {
+			var note = this.song.notes[i];
+			set_note_position(note, timeFromStart);
+		}
+	},
+	
+	set_note_position: function(note, timeFromStart) {
+		var endTimeDiff = note.end- timeFromStart;
+		if (endTimeDiff < 0) {
+			this.graphics.scene.remove(note.mesh);
+			this.graphics.scene.remove(note.head_mesh);
+			if (endTimeDiff < 5000) {
+				this.song.notes.lastDisappearIndex = this.song.notes.indexOf(note); // TODO: really define the last disappeared note
+			}
+		}
+	
+	
+		var timeDiff = note.start - timeFromStart;
+	
+		var pos = this.graphics.NOTES_POS_0.clone();
+		pos.add(NOTES_POS_DELTA.clone().multiplyScalar(note.label));
+		
+		var vecDelta = this.graphics.neckDir.clone();
+		vecDelta.multiplyScalar(timeDiff * this.NOTE_SPEED);
+		
+		pos.add(vecDelta);
+		note.mesh.position = pos;
+		note.head_mesh.position = pos;
+	},
 
 	currentTime: function() {
 		var d = new Date();
@@ -58,10 +89,13 @@ Game.prototype = {
 	
 	update: function() {
 		var timeFromStart = this.timeFromStart();
-		this.getNotesToShow();
+		
 		this.updateScores(timeFromStart);
-		this.stopNotes(timeFromStart);
 		this.lastUpdateTime = timeFromStart;
+		
+		this.getNotesToShow();
+		this.stopNotes(timeFromStart);
+		this.set_note_positions(timeFromStart);
 	},
 
 	stopNotes: function(timeFromStart) {

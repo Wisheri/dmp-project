@@ -11,6 +11,7 @@ function Graphics(game) {
 	var NOTE_WIDTH = 1.0; // This depends on the shape of the note!	
 	this.LENGTH_TO_LINE = 22;
 	var NOTES_POS_0 = new THREE.Vector3(-NECK_WIDTH/2 + NECK_WIDTH / 10, -NECK_LENGTH/2 + this.LENGTH_TO_LINE,0); // Later rotated with neckRotation
+	this.NOTES_POS_0 = NOTES_POS_0;
 	// Later note positions can be initialized to NOTES_POS_0 + n*NOTES_POS_DELTA
 	var NOTES_POS_DELTA = new THREE.Vector3(NECK_WIDTH / 5, 0, 0); // Later rotated with neckRotation 
 	
@@ -141,10 +142,11 @@ function Graphics(game) {
 		for (var i = 0; i < this.objects.notes.length; i += 1) {
 			var dir = this.objects.neckDir;
 			var note = this.objects.notes[i];
-			note.mesh.translateOnAxis(dir, -game.NOTE_SPEED*deltaMs);
+			//note.mesh.translateOnAxis(dir, -game.NOTE_SPEED*deltaMs);
 			var vecDelta = dir.clone();
 			vecDelta.multiplyScalar(-game.NOTE_SPEED*deltaMs);
 			note.head_mesh.position.add(vecDelta);
+			note.mesh.position.add(vecDelta);
 		}
 		
 		globals.game.graphics.stopEmitters(globals.game.timeFromStart());
@@ -205,6 +207,7 @@ function Graphics(game) {
 	this.init_particle_system = function () {
 		this.particleGroup = new SPE.Group({
 			texture: THREE.ImageUtils.loadTexture('../files/testparticle2.png'),
+			blending: THREE.AdditiveBlending,
 			maxAge: 0.3
 		});
 		
@@ -213,17 +216,20 @@ function Graphics(game) {
 				position: NOTES_POS_0.clone().add(NOTES_POS_DELTA.clone().multiplyScalar(i)),
 				positionSpread: new THREE.Vector3(0, 0, 0),
 
-				acceleration: new THREE.Vector3(0, 5, 0),
+				acceleration: new THREE.Vector3(0, 10, 0),
 				accelerationSpread: new THREE.Vector3(0, 0, 0),
 
-				velocity: new THREE.Vector3(0, 18, 0),
-				velocitySpread: new THREE.Vector3(2.5, 0, 2.5),
-
+				velocity: new THREE.Vector3(0, 13, 0),
+				velocitySpread: new THREE.Vector3(2, 0, 2),
+				
+				opacityStart: 0.2,
+				opacityEnd: 0.0,
+				
 				colorStart: new THREE.Color('red'),
-				colorEnd: new THREE.Color('white'),
+				colorEnd: new THREE.Color('yellow'),
 
 				sizeStart: 0.5,
-				sizeEnd: 3,
+				sizeEnd: 1.5,
 
 				particleCount: 1500
 			});
