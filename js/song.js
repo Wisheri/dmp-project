@@ -1,7 +1,7 @@
 function Song(text) {
 	this.notes = new Array();
 	this.notes.lastShownIndex = -1;
-	this.notes.lastDisappearedIndex = 0;
+	this.notes.lastDisappearedIndex = -1;
 	this.parseNotes(text);	
 	globals.song = this;
 	startGame(this);

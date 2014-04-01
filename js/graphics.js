@@ -14,6 +14,7 @@ function Graphics(game) {
 	this.NOTES_POS_0 = NOTES_POS_0;
 	// Later note positions can be initialized to NOTES_POS_0 + n*NOTES_POS_DELTA
 	var NOTES_POS_DELTA = new THREE.Vector3(NECK_WIDTH / 5, 0, 0); // Later rotated with neckRotation 
+	this.NOTES_POS_DELTA = NOTES_POS_DELTA;
 	
 	this.score3d = new Object();
 
@@ -131,7 +132,11 @@ function Graphics(game) {
 		this.backgroundScene.add(this.backgroundMesh);
 
 	}
-
+	
+	
+    /* ------------ */
+	/*  RENDER  	*/
+	/* ------------ */
 	function render_game(delta, renderer) { 
 		var deltaMs = delta * 1000;
 		var game = this.objects.game;
@@ -139,14 +144,16 @@ function Graphics(game) {
 		// Rotate light
 		this.objects.light.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), delta);		
 
-		for (var i = 0; i < this.objects.notes.length; i += 1) {
+		for (var i = globals.game.song.notes.lastDisappearedIndex; i <= globals.game.song.notes.lastShownIndex; i += 1) {
+			if (i == -1) continue;
 			var dir = this.objects.neckDir;
 			var note = this.objects.notes[i];
 			//note.mesh.translateOnAxis(dir, -game.NOTE_SPEED*deltaMs);
-			var vecDelta = dir.clone();
+			/*var vecDelta = dir.clone();
 			vecDelta.multiplyScalar(-game.NOTE_SPEED*deltaMs);
 			note.head_mesh.position.add(vecDelta);
-			note.mesh.position.add(vecDelta);
+			note.mesh.position.add(vecDelta);*/
+			globals.game.set_note_position(note, globals.game.timeFromStart());
 		}
 		
 		globals.game.graphics.stopEmitters(globals.game.timeFromStart());

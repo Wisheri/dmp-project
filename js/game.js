@@ -41,17 +41,18 @@ Game.prototype = {
 	set_note_positions: function(timeFromStart) {
 		for (var i = this.song.notes.lastShownIndex; i > this.song.notes.lastDisappearedIndex; i--) {
 			var note = this.song.notes[i];
-			set_note_position(note, timeFromStart);
+			this.set_note_position(note, timeFromStart);
 		}
 	},
 	
 	set_note_position: function(note, timeFromStart) {
-		var endTimeDiff = note.end- timeFromStart;
-		if (endTimeDiff < 0) {
+		var buffer = 1000; // Wait 1 sec before removing the note to make sure it's already out of view
+		var endTimeDiff = note.end - timeFromStart;
+		if (endTimeDiff < 0 - buffer) {
 			this.graphics.scene.remove(note.mesh);
 			this.graphics.scene.remove(note.head_mesh);
 			if (endTimeDiff < 5000) {
-				this.song.notes.lastDisappearIndex = this.song.notes.indexOf(note); // TODO: really define the last disappeared note
+				this.song.notes.lastDisappearedIndex = this.song.notes.indexOf(note); // TODO: really define the last disappeared note
 			}
 		}
 	
@@ -59,7 +60,7 @@ Game.prototype = {
 		var timeDiff = note.start - timeFromStart;
 	
 		var pos = this.graphics.NOTES_POS_0.clone();
-		pos.add(NOTES_POS_DELTA.clone().multiplyScalar(note.label));
+		pos.add(this.graphics.NOTES_POS_DELTA.clone().multiplyScalar(note.label));
 		
 		var vecDelta = this.graphics.neckDir.clone();
 		vecDelta.multiplyScalar(timeDiff * this.NOTE_SPEED);
@@ -95,7 +96,7 @@ Game.prototype = {
 		
 		this.getNotesToShow();
 		this.stopNotes(timeFromStart);
-		this.set_note_positions(timeFromStart);
+		//this.set_note_positions(timeFromStart);
 	},
 
 	stopNotes: function(timeFromStart) {
