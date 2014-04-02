@@ -109,7 +109,7 @@ function Graphics(game) {
 		this.light.position.set(0, 1, 0.5);
 
 		this.scene.add(this.light);
-		var ambientLight = new THREE.AmbientLight( 0x202020 ); // soft white light
+		var ambientLight = new THREE.AmbientLight( 0x101010 ); // soft white light
 		this.scene.add( ambientLight );
 
 		/* ------------ */
@@ -147,7 +147,7 @@ function Graphics(game) {
 		for (var i = globals.game.song.notes.lastDisappearedIndex; i <= globals.game.song.notes.lastShownIndex; i += 1) {
 			if (i == -1) continue;
 			var dir = this.objects.neckDir;
-			var note = this.objects.notes[i];
+			var note = globals.game.song.notes[i];
 			//note.mesh.translateOnAxis(dir, -game.NOTE_SPEED*deltaMs);
 			/*var vecDelta = dir.clone();
 			vecDelta.multiplyScalar(-game.NOTE_SPEED*deltaMs);
@@ -227,18 +227,18 @@ function Graphics(game) {
 				accelerationSpread: new THREE.Vector3(0, 0, 0),
 
 				velocity: new THREE.Vector3(0, 13, 0),
-				velocitySpread: new THREE.Vector3(2, 0, 2),
+				velocitySpread: new THREE.Vector3(3, 0, 3),
 				
-				opacityStart: 0.2,
+				opacityStart: 0.5,
 				opacityEnd: 0.0,
 				
 				colorStart: new THREE.Color('red'),
-				colorEnd: new THREE.Color('yellow'),
+				colorEnd: new THREE.Color('white'),
 
 				sizeStart: 0.5,
-				sizeEnd: 1.5,
+				sizeEnd: 2.5,
 
-				particleCount: 1500
+				particleCount: 50
 			});
 
 			this.particleGroup.addEmitter(emitter);
@@ -251,7 +251,7 @@ function Graphics(game) {
 	this.init_score3d();
 	this.create_note_geometries(globals.song.notes);
 	globals.renderManager.add('game', this.scene, this.camera, render_game, 
-				{game: this.game, notes: this.notes, neckDir: this.neckDir, light: this.light, backgroundScene: this.backgroundScene, 
+				{game: this.game, notes: this.game.song.notes, neckDir: this.neckDir, light: this.light, backgroundScene: this.backgroundScene, 
 				backgroundCamera: this.backgroundCamera, scoreCamera: this.scoreCamera, scoreScene: this.scoreScene,
 				particleGroup: this.particleGroup});
 	globals.renderManager.setCurrent('game');

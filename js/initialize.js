@@ -73,7 +73,7 @@ function load_geometries() {
 	loader.load( "../files/note_model.js", this.load_note_head_geometry );
 	var guitarLoader = new THREE.JSONLoader(true);
 	guitarLoader.onLoadComplete = guitar_geometry_ready;
-	guitarLoader.load( "../files/hairok_stratocaster.js", this.load_guitar_geometry );
+	guitarLoader.load( "../files/hairok_stratocaster2.js", this.load_guitar_geometry );
 }
 
 function load_note_head_geometry(geometry) {

@@ -35,7 +35,7 @@ Game.prototype = {
 
 		this.graphics.scene.add(note.mesh);
 		this.graphics.scene.add(note.head_mesh);
-		this.graphics.notes.push(note);
+		//this.graphics.notes.push(note);
 	},
 	
 	set_note_positions: function(timeFromStart) {
