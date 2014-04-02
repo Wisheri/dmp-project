@@ -162,7 +162,6 @@ function Graphics(game) {
 		renderer.clear();
 		renderer.render(this.objects.backgroundScene, this.objects.backgroundCamera);
 		renderer.render(this.scene, this.camera);
-		renderer.render(this.objects.scoreScene, this.objects.scoreCamera);
 	}
 
 	this.create_note_geometries = function(notes) {
@@ -200,15 +199,19 @@ function Graphics(game) {
 		note.head_mesh.position.add(NOTES_POS_0);
 	}
 
-	this.init_score3d = function() {		
-		this.create_score_mesh("0");
-		
-		this.scoreScene = new THREE.Scene();
-		this.scoreCamera = new THREE.Camera();
-		this.scoreScene.add(this.scoreCamera);
-		this.scoreScene.add(this.score3d);
-		var light = new THREE.AmbientLight( 0xffffff );
-		this.scoreScene.add( light );
+	this.init_score3d = function() {
+		this.scoreText = document.createElement('div');
+		this.scoreText.style.position = 'absolute';
+		this.scoreText.style.zIndex = 1;
+		this.scoreText.style.width = 100;
+		this.scoreText.style.height = 100;
+		this.scoreText.style.color = "red";
+		this.scoreText.style.fontSize = 70;
+		this.scoreText.style.fontFamily = "Lucida Console";
+		this.scoreText.innerHTML = "score: 0";
+		this.scoreText.style.top = 50 + 'px';
+		this.scoreText.style.left = 50 + 'px';
+		document.body.appendChild(this.scoreText);
 	}
 
 	this.init_particle_system = function () {
@@ -252,7 +255,7 @@ function Graphics(game) {
 	this.create_note_geometries(globals.song.notes);
 	globals.renderManager.add('game', this.scene, this.camera, render_game, 
 				{game: this.game, notes: this.game.song.notes, neckDir: this.neckDir, light: this.light, backgroundScene: this.backgroundScene, 
-				backgroundCamera: this.backgroundCamera, scoreCamera: this.scoreCamera, scoreScene: this.scoreScene,
+				backgroundCamera: this.backgroundCamera,
 				particleGroup: this.particleGroup});
 	globals.renderManager.setCurrent('game');
 }
@@ -315,25 +318,8 @@ Graphics.prototype = {
 	},
 	
 	setScores: function(score) {
-		var text = score.toString();
-		this.scoreScene.remove(this.score3d);
-		this.create_score_mesh(text);
-		this.scoreScene.add(this.score3d);
-
-	},
-	
-	create_score_mesh: function(scoreStr) {
-		var text_geometry = new THREE.TextGeometry( scoreStr, {
-			size: 0.1,
-			height: 0.1,
-			curveSegments: 0,
-			bevelEnabled: false, 
-		});
-		var text_material = new THREE.MeshPhongMaterial({ambient: 0xff1111});
-		this.score3d = new THREE.Mesh(text_geometry, text_material);
-		this.score3d.material.depthTest = false;
-		this.score3d.material.depthWrite = false;
-		this.score3d.position = new THREE.Vector3(-0.7, 0.7, 0);
+		var text = "score: " + score.toString();
+		this.scoreText.innerHTML = text;
 	},
 	
 	stopEmitters: function(timeFromStart) {

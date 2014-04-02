@@ -44,7 +44,7 @@ function animate() {
 	
 	if (globals.started) {
 		var gameTimeDiff = globals.game.timeFromStart() - globals.game.lastUpdateTime;
-		if (gameTimeDiff > 200) {
+		if (gameTimeDiff > 30) { // Limit to ~30 updates per second
 			globals.game.update();
 		}
 	}
