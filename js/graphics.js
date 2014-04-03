@@ -1,6 +1,7 @@
 function Graphics(game) {
 	this.game = game;
 	this.keyMeshes = new Array();
+	this.pointLights = new Array();
 	this.emitterStartTimes = [0, 0, 0, 0, 0];
 	this.keyPositions = new Array();
 	this.LINE_POS = new Object();
@@ -92,6 +93,9 @@ function Graphics(game) {
 
 		var neck_material = new THREE.MeshPhongMaterial({map: globals.textures['neck']});	
 		this.neck = new THREE.Mesh(globals.geometries.guitar_geometry, globals.materials.guitar_material);
+		this.neck.castShadow = true;
+		this.neck.receiveShadow = true;
+		
 		this.neck.geometry.applyMatrix(this.NECK_SCALE);
 		this.neck.geometry.applyMatrix(this.NECK_SCALE_X);
 		this.neck.rotation = neckEuler.clone();
@@ -106,12 +110,27 @@ function Graphics(game) {
 		/* ----------- */
 
 		this.light = new THREE.DirectionalLight(0xffffff, 0.6);
+		this.light.castShadow = true;
+		this.light.shadowDarkness = 1.0;
+		//this.light.shadowCameraVisible = true;
+		this.light.shadowMapWidth = 1000;
+		this.light.shadowMapHeight = 1000;
 		this.light.position.set(0, 1, 0.5);
 
 		this.scene.add(this.light);
 		var ambientLight = new THREE.AmbientLight( 0x101010 ); // soft white light
-		this.scene.add( ambientLight );
+		//this.scene.add( ambientLight );
 
+		for (var i = 0; i < 5; i++) {
+			//var pointLight = new THREE.PointLight( this.LABEL_TO_COLOR_MAP[i], 5, 1);
+			var pointLight = new THREE.PointLight( 0xffffff, 5, 3);
+			pointLight.position = NOTES_POS_0.clone().add(NOTES_POS_DELTA.clone().multiplyScalar(i));
+			pointLight.translateOnAxis(neckUp, this.KEY_HEIGHT);
+			pointLight.visible = false;
+			this.pointLights.push(pointLight);
+			this.scene.add( pointLight );
+		}
+		
 		/* ------------ */
 		/*  Background  */
 		/* ------------ */
@@ -189,6 +208,8 @@ function Graphics(game) {
 		note.mesh.position.copy(NOTES_POS_DELTA);
 		note.mesh.position.multiplyScalar(n);
 		note.mesh.position.add(NOTES_POS_0);
+		note.mesh.castShadow = true;
+		note.mesh.receiveShadow = true;
 		
 		// Create the head mesh
 		note.head_mesh = new THREE.Mesh( globals.geometries.note_head_geometry, this.get_note_material(note.label, false) );
@@ -197,6 +218,8 @@ function Graphics(game) {
 		note.head_mesh.position.copy(NOTES_POS_DELTA);
 		note.head_mesh.position.multiplyScalar(n);
 		note.head_mesh.position.add(NOTES_POS_0);
+		note.head_mesh.castShadow = true;
+		note.head_mesh.receiveShadow = true;
 	}
 
 	this.init_score3d = function() {
@@ -262,7 +285,7 @@ function Graphics(game) {
 
 Graphics.prototype = {
 	NOTE_MATERIAL_NOT_PRESSED: new THREE.MeshPhongMaterial({color: 0xffff11, specular: 0xffff11, 
-								shininess: 10, wrapAround: true, wrapRGB: new THREE.Vector3(1, 0 ,0)}),
+								shininess: 10, wrapAround: true, wrapRGB: new THREE.Vector3(1, 1 ,1)}),
 								
 	NOTE_MATERIAL_PRESSED: new THREE.MeshPhongMaterial({color: 0xffff11, specular: 0xffffff, emissive: 0x999999,
 								 shininess: 100, wrapAround: true, wrapRGB: new THREE.Vector3(1, 1 ,1)}),
@@ -282,6 +305,9 @@ Graphics.prototype = {
 								0, 1, 0, 0,
 								0, 0, 1, 0,
 								0, 0, 0, 0),
+								
+	POINTLIGHT_HEIGHT: 0.5,							
+	
 	KEY_HEIGHT: 0.22,
 	KEY_HEIGHT_CHANGE: 0.12, // How much the height changes on keydown
 	
@@ -328,6 +354,7 @@ Graphics.prototype = {
 			var diff = timeFromStart - t;
 			if (diff > this.FLAME_EMITTER_AGE) {
 				this.particleGroup.emitters[i].disable();
+				this.pointLights[i].visible = false;
 			}
 		}
 	}

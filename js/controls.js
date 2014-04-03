@@ -19,6 +19,7 @@ Controls.prototype = {
 			closestNote.isPressed = true;
 			globals.game.graphics.particleGroup.emitters[label].enable();
 			globals.game.graphics.emitterStartTimes[label] = globals.game.timeFromStart();
+			globals.game.graphics.pointLights[label].visible = true;
 			globals.game.score += 500;
 		} else {
 			// Punish for missing
@@ -62,6 +63,7 @@ function gamekeydown(keyCode){
 					var keyMesh = globals.game.graphics.keyMeshes[i];
 					keyMesh.material = globals.game.graphics.get_key_material(i, true);
 					keyMesh.translateOnAxis(globals.game.graphics.neckUp, -globals.game.graphics.KEY_HEIGHT_CHANGE);
+					globals.game.graphics.pointLights[i].visible = false;
 				}
 			}
 		}

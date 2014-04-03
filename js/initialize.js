@@ -25,7 +25,8 @@ globals.textures['background'] = THREE.ImageUtils.loadTexture('../images/bg.jpg'
 
 globals.started = false;
 
-var renderer = new THREE.WebGLRenderer();
+var renderer = new THREE.WebGLRenderer({maxLights: 10});
+renderer.shadowMapEnabled = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 globals.renderManager = new THREE.Extras.RenderManager(renderer);

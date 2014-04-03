@@ -85,6 +85,7 @@ Game.prototype = {
 			this.pressedNotes[label].isPressed = false;
 			this.pressedNotes[label].mesh.material = globals.game.graphics.get_note_material(label, false);
 			this.pressedNotes[label].head_mesh.material = globals.game.graphics.get_note_material(label, false);
+			globals.game.graphics.pointLights[label].visible = false;
 		}
 	},
 	
