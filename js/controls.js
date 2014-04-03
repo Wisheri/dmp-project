@@ -87,7 +87,10 @@ document.onkeydown = function(e) {
 	// Press m to use number keys instead of F-keys
 	if (keyCode == 77) globals.controls.labelToKeyMap = [49, 50, 51, 52, 53];
 	// Press l for low graphics mode
-	else if (keyCode == 76) renderer.shadowMapEnabled = false;
+	else if (keyCode == 76) {
+		renderer.shadowMapEnabled = false;
+		renderer.antialias = false;
+	}
 	else if (globals.started == false){
 		menukeydown(keyCode);
 	} else {
