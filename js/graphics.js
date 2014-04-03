@@ -108,14 +108,32 @@ function Graphics(game) {
 		/* ----------- */
 		/*    Light    */
 		/* ----------- */
-
-		this.light = new THREE.DirectionalLight(0xffffff, 0.6);
-		this.light.castShadow = true;
-		this.light.shadowDarkness = 1.0;
-		//this.light.shadowCameraVisible = true;
-		this.light.shadowMapWidth = 1000;
-		this.light.shadowMapHeight = 1000;
-		this.light.position.set(0, 1, 0.5);
+		if (renderer.shadowMapEnabled) {
+			this.light = new THREE.SpotLight(0xffffff);
+			this.light.castShadow = true;
+			this.light.shadowMapWidth = 1024;
+			this.light.shadowMapHeight = 1024;
+			
+			this.light.shadowCameraNear = 5;
+			this.light.shadowCameraFar = -5;
+			this.light.shadowCameraFov = 50;
+			this.light.position.set(0, 10, 5);
+		}
+		else {
+			this.light = new THREE.DirectionalLight(0xffffff, 0.6);
+			this.light.position.set(0, 1, 0.5);
+			/*this.light.shadowCameraVisible = true;
+			this.light.shadowDarkness = 0.5;
+			this.light.shadowCameraVisible = true;
+			this.light.shadowCameraNear = -5;
+			this.light.shadowCameraFar = 5;
+			this.light.shadowCameraLeft = -5;
+			this.light.shadowCameraRight = 5;
+			this.light.shadowCameraTop = 5;
+			this.light.shadowCameraBottom = -5;
+			this.light.shadowMapWidth = 1000;
+			this.light.shadowMapHeight = 1000;*/
+		}
 
 		this.scene.add(this.light);
 		var ambientLight = new THREE.AmbientLight( 0x101010 ); // soft white light
