@@ -177,6 +177,14 @@ function Graphics(game) {
 		
 		globals.game.graphics.stopEmitters(globals.game.timeFromStart());
 		
+		/**
+		*	The song has ended
+		*/
+		if ((globals.game.timeFromStart() / 1000) > document.getElementById('example_song').duration) {
+			window.location = "../highscore?a=" + globals.game.score.toString();
+		}		
+		
+
 		renderer.autoClear = false;
 		renderer.clear();
 		renderer.render(this.objects.backgroundScene, this.objects.backgroundCamera);
