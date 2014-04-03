@@ -199,9 +199,9 @@ function Graphics(game) {
 		*	The song has ended
 		*/
 		if ((globals.game.timeFromStart() / 1000) > document.getElementById('example_song').duration) {
+			cancelAnimationFrame(render_game);
 			window.location = "../highscore?a=" + globals.game.score.toString();
-		}		
-		
+		}
 
 		renderer.autoClear = false;
 		renderer.clear();
