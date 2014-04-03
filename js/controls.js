@@ -23,6 +23,16 @@ Controls.prototype = {
 			globals.game.score += 500;
 		} else {
 			// Punish for missing
+			var random_number = Math.random();
+			if (random_number <= 0.33) {
+				document.getElementById('missed_1').play();
+			}
+			else if (random_number > 0.33 && random_number <= 0.66) {
+				document.getElementById('missed_2').play();
+			}
+			else {
+				document.getElementById('missed_3').play();
+			}
 			globals.game.score -= 1000;
 		}
 	}
