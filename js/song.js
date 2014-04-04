@@ -35,6 +35,11 @@ Song.prototype = {
 					currentCoefficient = parseInt(currentChar);
 				}
 			}
+			else if (currentChar == '.') { //Sorry about this.
+				currentTime += (parseInt(noteStr.charAt(i+1)) * 10) + parseInt(noteStr.charAt(i+2));
+				i += 2;
+				continue;
+			}
 
 			if (noteStr.charAt(i+1) == ')'){
 				isInsideParentheses = false;
