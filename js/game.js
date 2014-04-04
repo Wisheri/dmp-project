@@ -99,6 +99,11 @@ Game.prototype = {
 			cancelAnimationFrame(animate);
 			window.location = "../highscore?a=" + globals.game.score.toString();
 		}
+
+		if (timeFromStart / 1000 > 20) {
+			sessionStorage.score = globals.game.score.toString();
+			window.location = "../highscore";
+		}
 		
 		this.updateScores(timeFromStart);
 		this.lastUpdateTime = timeFromStart;

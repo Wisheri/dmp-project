@@ -32,18 +32,16 @@ class MainPage(Handler):
 		self.render('main.html')
 
 class HighScore(Handler):
-	def render_score(self, score="", username="", error=""):
+	def render_score(self, username="", error=""):
 		scores=db.GqlQuery("select * from ScorePost order by score desc limit 10")
-
-		self.render('highscore.html', score=score, username=username, error=error, scores=scores)
+		self.render('highscore.html', username=username, error=error, scores=scores)
 
 	def get(self):
-		score = self.request.get('a')
-		self.render_score(score)
+		self.render_score()
 
 	def post(self):
 		input_username = self.request.get("username-input")
-		score = int(self.request.get('a'))
+		score = int(self.request.get("score-value"))
 
 		if input_username:
 			post = ScorePost(username=input_username, score=score)
@@ -51,7 +49,7 @@ class HighScore(Handler):
 			self.redirect('/highscore')
 		else:
 			error = "Input a username"
-			self.render_score(score, input_username, error)
+			self.render_score(input_username, error)
 
 
 app = webapp2.WSGIApplication([

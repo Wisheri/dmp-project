@@ -16,33 +16,46 @@
 		.error{
 			color: red;
 		}
+		h2 {
+			display: inline;
+		}
 	</style>
 
-</head>
-
-<body>
-
 	<script>
+		function load_score() {
+			if (parseInt(sessionStorage.score) > 0) {
+				document.getElementById('score').value = sessionStorage.score;
+				document.getElementById('score-visible').innerHTML = sessionStorage.score;
+				sessionStorage.score = "0";
+			}
+			else {
+				document.getElementById('form').style.visibility="hidden";
+			}
+		}
 
 
 	</script>
 
-	<h2 id="title">DMP-PROJECT - Highscore</h5>
+</head>
+
+<body onload="load_score();">
+
+	<h1 id="title">DMP-PROJECT - Highscore</h1>
 	<br>
-	<h1 name="score"></h1>
-	{% if score %}
+
 	<form method="post" id="form">
 		<h2 id="username">Username:
-		<input type="text" name="username-input" value="{{username}}"></h2>
-		<h2 id="score">Score: {{score}}</h2>
+		<input type="text" name="username-input" value="{{username}}"></h2><br>
+		<h2>Score: <h2 id="score-visible"></h2></h2><br>
+		<input type="hidden" id="score" name="score-value">
 		<input type="submit">
 		<div class="error">{{error}}</div>
 	</form>
-	{% endif %}
+
 	<hr>
 	{% for s in scores %}
 		<div class="user-info">
-				<h2>Username: {{s.username}}, Score: {{s.score}}</h2>
+				<h2>Username: {{s.username}}, Score: {{s.score}}</h2><br>
 		</div>
 	{% endfor %}
 
