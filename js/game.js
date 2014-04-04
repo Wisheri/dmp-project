@@ -92,7 +92,7 @@ Game.prototype = {
 	update: function() {
 		var timeFromStart = this.timeFromStart();
 		
-		if (timeFromStart / 1000) > document.getElementById('example_song').duration) {
+		if (timeFromStart / 1000 > document.getElementById('example_song').duration) {
 			/**
 			*	The song has ended
 			*/
