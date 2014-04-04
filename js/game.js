@@ -92,6 +92,14 @@ Game.prototype = {
 	update: function() {
 		var timeFromStart = this.timeFromStart();
 		
+		if (timeFromStart / 1000) > document.getElementById('example_song').duration) {
+			/**
+			*	The song has ended
+			*/
+			cancelAnimationFrame(animate);
+			window.location = "../highscore?a=" + globals.game.score.toString();
+		}
+		
 		this.updateScores(timeFromStart);
 		this.lastUpdateTime = timeFromStart;
 		
