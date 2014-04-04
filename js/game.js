@@ -1,4 +1,5 @@
 function Game(song) {
+	this.isOver = false;
 	this.controls = globals.controls; 
 	this.score = 0;
 	var example_song = document.getElementById('example_song');
@@ -96,6 +97,7 @@ Game.prototype = {
 			/**
 			*	The song has ended
 			*/
+			this.isOver = true;
 			cancelAnimationFrame(animate);
 			sessionStorage.score = globals.game.score.toString();
 			window.location = "../highscore";

@@ -41,6 +41,7 @@ function startGame(song) {
 }
 
 function animate() {
+	if (globals.game.isOver) return;
 	requestAnimationFrame(animate);
 	globals.renderManager.renderCurrent();
 	
