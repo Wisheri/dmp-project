@@ -26,26 +26,30 @@
 			if (parseInt(sessionStorage.score) > 0) {
 				document.getElementById('score').value = sessionStorage.score;
 				document.getElementById('score-visible').innerHTML = sessionStorage.score;
-				sessionStorage.score = "0";
 			}
 			else {
 				document.getElementById('form').style.visibility="hidden";
 			}
 		}
 
+		function submitted() {
+			if (document.getElementById('user_input').value.length > 0) {
+				sessionStorage.score = "0";
+			}
+		}
 
 	</script>
 
 </head>
 
-<body onload="load_score();">
+<body onload="load_score()">
 
 	<h1 id="title">DMP-PROJECT - Highscore</h1>
 	<br>
 
-	<form method="post" id="form">
+	<form method="post" id="form" onsubmit="submitted()">
 		<h2 id="username">Username:
-		<input type="text" name="username-input" value="{{username}}"></h2><br>
+		<input type="text" id="user_input" name="username-input" value="{{username}}"></h2><br>
 		<h2>Score: <h2 id="score-visible"></h2></h2><br>
 		<input type="hidden" id="score" name="score-value">
 		<input type="submit">
